@@ -27,7 +27,7 @@ CREATE TABLE matches (
 
 --VIEWS
 
--- view representing player wins but includes nulls
+-- view representing player wins but includes null data values (players that do not have win values because they have yet to win a game)
 CREATE VIEW 
 	player_wins 
 AS SELECT 
@@ -38,7 +38,8 @@ FROM
 GROUP BY
 	winner_id;
 
--- same as player_wins view but nulls are replaced by 0
+-- view which assigns all players the number of times in which they won a game
+-- replaces any null data value from the player_losses view with value 0
 CREATE VIEW
 	all_player_wins
 AS SELECT
@@ -51,7 +52,7 @@ FROM
 	ON 
 		players.id = player_wins.winner_id;
 
--- view representing player losses but includes nulls
+-- view representing player losses but includes null data values (players that do not have loss values because they have yet to lose a game)
 CREATE VIEW 
 	player_losses 
 AS SELECT 
@@ -62,7 +63,8 @@ FROM
 GROUP BY
 	loser_id;
 
--- same as player_losses views but nulls are replaced by 0 
+-- view which assigns all players the number of times in which they lost a game
+-- replaces any null data value from the player_losses view with value 0
 CREATE VIEW
 	all_player_losses
 AS SELECT
@@ -103,7 +105,7 @@ FROM
 	all_player_matches
 WHERE
            all_player_wins.id = all_player_matches.player_id
- AND
+AND
            players.id = all_player_wins.id
 ORDER BY 
 	wins DESC;

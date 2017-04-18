@@ -123,13 +123,10 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    database, cursor = connect()
     player_standings = playerStandings() # sorts players based on their wins 
     swiss_pairings = [];
     # pits players of closest rank against each other
     for i in xrange(0, len(players_standings), 2):
-        swiss_pairings.append((players_standings[i][0], players_standings[i][1]) + (players_standings[i + 1][0], players_standings[i + 1][1]))
-    cursor.close()
-    database.close()
+        swiss_pairings.append((player_standings[i][0], player_standings[i][1]) + (player_standings[i + 1][0], player_standings[i + 1][1]))
     return swiss_pairings
 
