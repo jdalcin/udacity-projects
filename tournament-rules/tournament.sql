@@ -6,30 +6,33 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
--- table represeniting tournament players
-CREATE TABLE
-	players (
-		id SERIAL PRIMARY KEY,
-		name TEXT);
+-- DATABASE
+
+DROP DATABASE IF EXISTS tournament;
+CREATE DATABASE tournament;
+\c tournament
+
+-- TABLES
+
+-- table representing tournament players
+CREATE TABLE players (
+	id SERIAL PRIMARY KEY,
+	name TEXT);
 
 -- table representing match outcomes
-CREATE TABLE 
-	matches (
-		id SERIAL PRIMARY KEY,
-		winner_id INTEGER 
-			REFERENCES 
-				players (id),
-		loser_id INTEGER 
-			REFERENCES 
-				players (id));
+CREATE TABLE matches (
+	id SERIAL PRIMARY KEY,
+	winner_id INTEGER REFERENCES players (id),
+	loser_id INTEGER REFERENCES players (id));
+
+--VIEWS
 
 -- view representing player wins but includes nulls
 CREATE VIEW 
 	player_wins 
 AS SELECT 
 	winner_id,
-	count(*)  -- counts all the times a player has won a match
-		AS wins 
+	count(*) AS wins -- counts all the times a player has won a match
 FROM
 	matches
 GROUP BY
@@ -40,8 +43,7 @@ CREATE VIEW
 	all_player_wins
 AS SELECT
 	players.id,
-	coalesce(wins, 0)
-		AS wins
+	coalesce(wins, 0) AS wins
 FROM
 		players
 	LEFT JOIN
@@ -54,8 +56,7 @@ CREATE VIEW
 	player_losses 
 AS SELECT 
 	loser_id,
-	count(*) -- counts all the times a player has lost a match
-		AS losses 
+	count(*) AS losses -- counts all the times a player has lost a match
 FROM
 	matches
 GROUP BY
@@ -66,8 +67,7 @@ CREATE VIEW
 	all_player_losses
 AS SELECT
 	players.id,
-	coalesce(losses, 0)	
-		AS losses
+	coalesce(losses, 0)	AS losses
 FROM
 		players
 	LEFT JOIN
@@ -79,17 +79,33 @@ FROM
 CREATE VIEW
 	all_player_matches
 AS SELECT
-	all_player_wins.id
-		AS player_id,
-	all_player_wins.wins
-	+ all_player_losses.losses -- adds the players wins and losses to get their total matches played
-		AS matches
-	FROM
-			all_player_wins
-		JOIN
-			all_player_losses
-		ON 
-			all_player_wins.id = all_player_losses.id;
+	all_player_wins.id AS player_id,
+	(all_player_wins.wins
+	+ all_player_losses.losses) AS matches -- adds the players wins and losses to get their total matches played
+FROM
+	all_player_wins,
+	all_player_losses
+WHERE
+	all_player_wins.id = all_player_losses.id;
 
+--view representing player rankings
+
+CREATE VIEW
+	player_rankings
+AS SELECT 
+	players.id,
+	players.name,
+	all_player_wins.wins,
+	all_player_matches.matches
+FROM
+	players,
+	all_player_wins,
+	all_player_matches
+WHERE
+           all_player_wins.id = all_player_matches.player_id
+ AND
+           players.id = all_player_wins.id
+ORDER BY 
+	wins DESC;
 
 

@@ -5,39 +5,39 @@
 
 import psycopg2
 
-
-def connect():
+def connect(database_name="tournament"):
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    database = psycopg2.connect("dbname={}".format(database_name))
+    cursor = database.cursor()
+    return (database, cursor)
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    connection = connect()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM matches;")
-    connection.commit()
+    database, cursor = connect()
+    cursor.execute("TRUNCATE TABLE matches;")
+    database.commit()
     cursor.close()
-    connection.close()
+    database.close()
 
 
 def deletePlayers():
-    """Remove all the player records from the database."""
-    connection = connect()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM players;")
-    connection.commit()
+    """Remove all the player records from the database.
+    This includes match records, if they are dependent on player ids.
+    """
+    database, cursor = connect()
+    cursor.execute("TRUNCATE TABLE players CASCADE;")
+    database.commit()
     cursor.close()
-    connection.close()
+    database.close()
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    connection = connect()
-    cursor = connection.cursor()
+    database, cursor = connect()
     cursor.execute("SELECT count(*) FROM players;")
     num_players = cursor.fetchone()[0]
     cursor.close()
-    connection.close()
+    database.close()
     return num_players
 
 
@@ -50,12 +50,18 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    connection = connect()
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO players (name) VALUES (%s);", (name,)) # protects against sql injection
-    connection.commit()
+    database, cursor = connect()
+    query = """
+    INSERT INTO players
+    	(name)
+    VALUES
+    	(%s);
+    """
+    params = (name,)
+    cursor.execute(query, params) # protects against sql injection
+    database.commit()
     cursor.close()
-    connection.close()
+    database.close()
 
 
 def playerStandings():
@@ -71,31 +77,11 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    connection = connect()
-    cursor = connection.cursor()
-    # joins table 'players', 'all_player_wins', and 'all_player_matches' to query their rows for the player standings
-    query = """
-    SELECT 
-        players.id,
-        players.name,
-        all_player_wins.wins,
-        all_player_matches.matches
-    FROM
-            players,
-            all_player_wins,
-            all_player_matches
-    WHERE
-            all_player_wins.id = all_player_matches.player_id
-        AND
-            players.id = all_player_wins.id
-    ORDER BY 
-        wins
-            DESC;
-    """
-    cursor.execute(query)
+    database, cursor = connect()
+    cursor.execute("SELECT * FROM player_rankings;")
     player_standings = cursor.fetchall()
     cursor.close()
-    connection.close()
+    database.close()
     return player_standings
 
 
@@ -106,19 +92,20 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    connection = connect()
-    cursor = connection.cursor()
+    database, cursor = connect()
     query = """
-    INSERT INTO 
-        matches 
-            (winner_id, loser_id) 
+    INSERT INTO matches 
+            (winner_id, 
+              loser_id) 
     VALUES 
-        (%s, %s);
+        (%s, 
+         %s);
     """
-    cursor.execute(query, (winner, loser)) # protects against sql injection
-    connection.commit()
+    params = (winner, loser)
+    cursor.execute(query, params) # protects against sql injection
+    database.commit()
     cursor.close()
-    connection.close()
+    database.close()
  
  
 def swissPairings():
@@ -136,29 +123,13 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    connection = connect()
-    cursor = connection.cursor()
-    # ranks players based on their wins and queries this ranking
-    query = """
-    SELECT 
-        players.id, 
-        name 
-    From 
-        players,
-        all_player_wins
-    WHERE
-        players.id = all_player_wins.id
-    ORDER BY
-        wins 
-            DESC;
-    """
-    cursor.execute(query)
-    players_ranked = cursor.fetchall()
+    database, cursor = connect()
+    player_standings = playerStandings() # sorts players based on their wins 
     swiss_pairings = [];
     # pits players of closest rank against each other
-    for i in xrange(0, len(players_ranked), 2):
-        swiss_pairings.append(players_ranked[i] + players_ranked[i + 1])
+    for i in xrange(0, len(players_standings), 2):
+        swiss_pairings.append((players_standings[i][0], players_standings[i][1]) + (players_standings[i + 1][0], players_standings[i + 1][1]))
     cursor.close()
-    connection.close()
+    database.close()
     return swiss_pairings
 
