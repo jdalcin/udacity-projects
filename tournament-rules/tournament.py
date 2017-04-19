@@ -5,39 +5,43 @@
 
 import psycopg2
 
-def connect(database_name="tournament"):
+def connect(database_name = "tournament"):
     """Connect to the PostgreSQL database.  Returns a database connection."""
     database = psycopg2.connect("dbname={}".format(database_name))
     cursor = database.cursor()
     return (database, cursor)
 
+def queryDatabase(query, database_name = "tournament", params = ()):
+	"""Queries a database returning a list of rows selected or an empty list if none were selected. 
+	Any command executed in the query updates the database.
+	params: see cursor class for psycopg2 for an explanation behind the inputs parameters of the params variable
+	"""
+	database, cursor = connect(database_name)
+	cursor.execute(query, params) # params is a list object
+	table_rows = ()
+	try:
+		table_rows = cursor.fetchall()
+	except psycopg2.ProgrammingError:
+		table_rows = ()
+	database.commit()
+	cursor.close()
+	database.close()
+	return table_rows
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    database, cursor = connect()
-    cursor.execute("TRUNCATE TABLE matches;")
-    database.commit()
-    cursor.close()
-    database.close()
-
+    queryDatabase("TRUNCATE TABLE matches;")
 
 def deletePlayers():
     """Remove all the player records from the database.
     This includes match records, if they are dependent on player ids.
     """
-    database, cursor = connect()
-    cursor.execute("TRUNCATE TABLE players CASCADE;")
-    database.commit()
-    cursor.close()
-    database.close()
-
+    queryDatabase("TRUNCATE TABLE players CASCADE;")
+  
 def countPlayers():
     """Returns the number of players currently registered."""
-    database, cursor = connect()
-    cursor.execute("SELECT count(*) FROM players;")
-    num_players = cursor.fetchone()[0]
-    cursor.close()
-    database.close()
+    num_players = queryDatabase("SELECT count(*) FROM players;")[0][0]
+    print num_players
     return num_players
 
 
@@ -50,7 +54,6 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    database, cursor = connect()
     query = """
     INSERT INTO players
     	(name)
@@ -58,11 +61,7 @@ def registerPlayer(name):
     	(%s);
     """
     params = (name,)
-    cursor.execute(query, params) # protects against sql injection
-    database.commit()
-    cursor.close()
-    database.close()
-
+    queryDatabase(query, params = params)
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -77,11 +76,7 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    database, cursor = connect()
-    cursor.execute("SELECT * FROM player_rankings;")
-    player_standings = cursor.fetchall()
-    cursor.close()
-    database.close()
+    player_standings = queryDatabase("SELECT * FROM player_rankings;")
     return player_standings
 
 
@@ -92,7 +87,6 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    database, cursor = connect()
     query = """
     INSERT INTO matches 
             (winner_id, 
@@ -102,10 +96,7 @@ def reportMatch(winner, loser):
          %s);
     """
     params = (winner, loser)
-    cursor.execute(query, params) # protects against sql injection
-    database.commit()
-    cursor.close()
-    database.close()
+    queryDatabase(query, params = params)
  
  
 def swissPairings():
@@ -126,7 +117,7 @@ def swissPairings():
     player_standings = playerStandings() # sorts players based on their wins 
     swiss_pairings = [];
     # pits players of closest rank against each other
-    for i in xrange(0, len(players_standings), 2):
+    for i in xrange(0, len(player_standings), 2):
         swiss_pairings.append((player_standings[i][0], player_standings[i][1]) + (player_standings[i + 1][0], player_standings[i + 1][1]))
     return swiss_pairings
 
