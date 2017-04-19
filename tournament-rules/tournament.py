@@ -14,7 +14,7 @@ def connect(database_name = "tournament"):
 def queryDatabase(query, database_name = "tournament", params = ()):
 	"""Queries a database returning a list of rows selected or an empty list if none were selected. 
 	Any command executed in the query updates the database.
-	params: see cursor class for psycopg2 for an explanation behind the inputs parameters of the params variable
+	params: see cursor class for psycopg2 for an explanation behind the input parameters of the params variable
 	"""
 	database, cursor = connect(database_name)
 	cursor.execute(query, params) # params is a list object
