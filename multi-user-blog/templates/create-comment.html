@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<!-- user submitted information for a comment to a blog -->
+	<form class="form" method="post" action="/comment">
+		<h2>Insert New Comment</h2>
+		<textarea name="comment" class="form-control comment-width" rows="15">{{comment}}</textarea>
+		<br>
+		<input type="submit" class="btn btn-primary btn-md" name="submit-comment">
+		<input type="submit" class="btn btn-danger btn-md" name="cancel" value="Cancel">
+		<span class="text-danger lead">{{error}}</span>
+		<input type="hidden" name="blog-id" value="{{blog_id}}">
+		<input type="hidden" name="comment-id" value="{{comment_id}}">
+		<input type="hidden" name="is-edit" value="{{is_edit}}">
+	</form>
+
+{% endblock %}

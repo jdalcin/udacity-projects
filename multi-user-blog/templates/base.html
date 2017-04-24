@@ -1,0 +1,32 @@
+<!-- Initial template which all webpages inherit from. Webpages have been built responsive using the bootstrap framework. -->
+
+<!doctype html>
+<html lang="en-us">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{{username}} Blog</title>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/main.css"> 
+	</head>
+
+	<body class="container-fluid">
+
+		<!-- Blog header showcasing the user logged in -->
+		<header class="row">
+			<h1 class="col-md-12 text-center text-uppercase bg-primary">
+				{% if username %}
+					{{username}}'s Blog
+				{% else %}
+					Blog
+				{% endif %}
+			</h1>
+		</header>
+
+		{% block content %}
+		{% endblock %}
+		
+	</body>
+
+</html>

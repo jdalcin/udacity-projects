@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<!-- Submits Login Information to Server -->
+	<section class="login">
+		<div class="row">
+			<div class="col-md-12">
+				<h2 class="col-md-12 text-center">Login</h2>
+			</div>
+		</div>
+		<div class="row">
+			<form class="form-inline center" method="post" action='/registration'>
+				<div class="form-group">
+					<label>
+						Username
+						<input class="form-control" type="text" name="username-login" value="{{username_login}}">
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						Password
+						<input class="form-control" type="password" name="password-login" value="{{password_login}}">
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						<input class="btn btn-primary form-control" type="submit" name="login" value="Login">
+						<span class="text-danger lead">{{error_login}}</span>
+					</label>
+				</div>
+			</form>
+		</div>
+	</section>
+
+	<!-- Submits User Registration Information to Server -->
+	<section class="registration">
+		<div class="row">
+			<div class="col-md-12">
+				<h2 class="text-center">New User Registration</h2>
+			</div>
+		</div>
+		<div class="row">
+			<form class="form center" method="post" action="/registration">
+				<div class="form-group">
+					<label>
+						Username
+						<input class="form-control" type="text" name="username-registration" value="{{username_registration}}">
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						Password
+						<input class="form-control" type="password" name="password-registration" value="{{password_registration}}">
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						Verify Password
+						<input class="form-control" type="password" name="verify-password-registration" value="{{password_check_registration}}">
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						<input class="btn btn-primary form-control" type="submit" name="registration">
+					</label>
+				</div>
+			</form> 
+		</div>
+		<div class="row text-danger text-center">
+			<div class="col-md-12 lead">
+				{{error_registration}}
+			</div>
+		</div>
+	</section>
+
+{% endblock %}

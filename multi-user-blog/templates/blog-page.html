@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<!-- new post and logout forms -->	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- submits a new post -->
+			<form class="form float-left" action='/newpost'>
+				<div class="form-group">
+					<button class="btn btn-success btn-lg">Insert New Post</button>
+				</div>
+			</form>
+			<!-- allows user to logout back to registration -->
+			<form class="form float-right" method="post" action='/blog'>
+				<div class="form-group">
+					<input class="btn btn-danger btn-sm right" type="submit" name="logout" value="Logout">
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Jinja Code -->
+
+	<!-- updates blog posts and comments -->
+	{% for blog_post in blog_posts %}
+
+		<!-- Blog Title -->
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h1 class="no-margins">{{blog_post.subject}}</h1>
+			</div>
+		</div>
+		<hr class="title-border">
+		<div class="row">
+			<div class="col-md-12 text-right">
+				<strong>
+				Author:
+				{{blog_post.user}}
+				</strong>
+			</div>
+			<div class="col-md-12 text-right">
+				<strong>
+				Date Posted:
+				{{blog_post.date.date()}}
+				</strong>
+			</div>
+		</div>
+
+		<!-- allows user to rate posts -->
+		{% if blog_post.user != username %}
+			<form class= "form-inline right" method="post" action="/blog">
+				{% if blog_post.key().id() == blog_id %}
+					<span class="text-danger lead">{{error}}</span>
+				{% endif %} 
+				<div class="form-group">
+					<label>
+						<input class="form-control btn btn-info btn-sm" type="submit" name="like" value="Like">
+						{{blog_post.likes}}
+					</label>
+				</div>
+				<div class="form-group">
+					<label>
+						<input class= "form-control btn btn-danger btn-sm" type="submit" name="dislike" value="Dislike">
+						{{blog_post.dislikes}}
+					</label>
+				</div>
+				<input type="hidden" name="blog-id" value="{{blog_post.key().id()}}">
+			</form>
+		{% else %}
+			<div class="row">
+				<div class="col-md-12 text-right">
+					<strong>
+						Like: {{blog_post.likes}}
+						Dislike: {{blog_post.dislikes}}
+					</strong>
+				</div>
+			</div>
+		{% endif %}
+
+		<!-- allows users to edit or delete posts -->
+		<form class="form-inline right" method="post" action="/blog">
+			{% if blog_post.user == username: %}
+				<div class="form-group">
+					<input class="btn btn-info btn-sm form-control" type="submit" name="edit" value="Edit Post">
+					<input class="btn btn-danger btn-sm form-control" type="submit" name="delete" value="Delete Post">
+				</div>
+			{% endif %}
+			<input type="hidden" name="blog-id" value="{{blog_post.key().id()}}">
+		</form>
+
+		<!-- Blog Body -->
+		<div class="row">
+			<div class="col-md-12">
+				<pre class="blog">{{blog_post.blog}}</pre>
+			</div>
+		</div>
+
+		<!-- allows user to add comments -->
+		<div class="row margin-bottom">
+			<div class="col-md-12">
+				<form class="form" action='/comment'>
+					<input class="btn btn-primary btn-success btn-sm" type="submit" name="add-comment" value="Add Comment">
+					<input type="hidden" name="blog-id" value="{{blog_post.key().id()}}">
+				</form>
+			</div>
+		</div>
+
+		<!-- comments -->
+		{% for comment in comments %}
+			{% if blog_post.key().id() == comment.blog_id %}
+				<div class="row">
+					<div class="col-md-12">
+						<strong>Comment:</strong>
+						<pre class="comment-text"> {{comment.comment}}</pre>
+					</div>
+				</div>
+				<div class="row margin-bottom">
+					<div class="col-md-12">
+						<strong>-{{comment.user}}</strong>
+						{% if comment.user == username %}
+							<form class="form-inline inline-block" method="post" action='/comment'>
+								<input class="btn btn-info btn-xs" type="submit" name ="edit-comment" value="Edit Comment">
+								<input type="hidden" name="comment-id" value="{{comment.key().id()}}">
+							</form>
+							<form class="form-inline inline-block" method="post" action='/blog'>
+								<input class="btn btn-danger btn-xs" type="submit" name="delete-comment" value="Delete Comment">
+								<input type="hidden" name="comment-id" value="{{comment.key().id()}}">
+							</form>
+						{% endif %}
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+
+		<!-- seperates blogs -->
+		<div class="row">
+			<div class="col-md-12">
+				<hr class="blog-seperation">
+			</div>
+		</div>
+	{% endfor %}
+
+{% endblock %}

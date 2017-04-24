@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<!-- welcomes user into blog -->
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<h2>Welcome, {{username}}!</h2>
+		</div>
+	</div>
+	<form class="form center" action='/blog'>
+		<button class="btn btn-primary">Click to Blog</button>
+	</form>
+
+{% endblock %}

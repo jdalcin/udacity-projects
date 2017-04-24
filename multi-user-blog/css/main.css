@@ -1,0 +1,84 @@
+				/* Element Stylings */
+				
+html {
+	box-sizing: border-box;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+hr {
+	margin: 2px 0;
+}
+
+pre {
+	background-color: white;
+	border: none;
+}
+
+				/* Class Stylings */
+
+.no-margins {
+	margin: 0;
+}
+
+.center {
+	text-align: center;
+}
+
+.right {
+	text-align: right;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+
+/* Blog Stylings */
+
+.title-border {
+	border: 2px solid black;
+	border-radius: 3px;
+}
+
+.blog {
+	font-size: 20px;
+	background-color: white;
+	border: none;
+	font-weight: bold;
+}
+
+.blog-width {
+	width: 400px;
+}
+
+.blog-seperation {
+	margin-bottom: 60px;
+}
+
+/*Comment Stylings */
+
+.comment-width {
+	width: 400px;
+}
+
+.comment-text {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.margin-bottom {
+	margin-bottom: 10px;
+}
+
+/* Semantic Stylings */
+
+.login {}
+
+.registration {}
