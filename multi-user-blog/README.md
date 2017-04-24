@@ -6,8 +6,15 @@ A blog for multiple users. Once an account is registered, users can post and com
 
 Steps:
 
-1. Reach the front page by either going to the URL or through your own localhost server using the file "main.py" in Google App Engine. 
-   If you use your own server, then make sure the location of the files within the "main.py" directory are unaltered.
+1. Reach the front page by one of two methods:
+	* go to the URL https://multi-user-blog-165603.appspot.com .
+	* your localhost server using the file "main.py" in Google App Engine:
+   		i. Make sure the location of the files within the "main.py" directory are unaltered. 
+   		ii. Get google app engine launcher to reach them (File --> Add existing application). 
+   		iii. Make sure your application is assigned to a port not in use. If you have command line "git bash", typing in "netstat -ano" 
+   		     into the command line will show all ports currently in use.
+   		iv. open on a browser by typing in URL "localhost:<PORT-ID>". <PORT-ID> is the port number that you chose for google app 
+   		     engine to launch the project on.
 2. register or log into the blog.
 3. update the blog with posts and comments.
 4. logout when finished.
