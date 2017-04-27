@@ -7,21 +7,21 @@ import hashlib
 def make_salt():
 	return ''.join(random.choice(string.letters) for letter in range(5))
 
-def make_cookie_secure(name):
+def make_secure(name):
 	if name is None:
 		return None
 
 	secret_word = 'wubbalubbadubdub' # ensures user cannot guess the hash using simply a name
-	hash_cookie = hashlib.sha256(''.join([name, secret_word])).hexdigest()
-	return "%s-%s" % (name, hash_cookie)
+	hashed_name = hashlib.sha256(''.join([name, secret_word])).hexdigest()
+	return "%s-%s" % (name, hashed_name)
 
-def validate_cookie(hashed_cookie):
-	if hashed_cookie is None or not '-' in hashed_cookie:
+def validate(hashed_name):
+	if hashed_name is None or not '-' in hashed_name:
 		return None
 
-	name = hashed_cookie.split('-')[0]
-	hashed_name = hashed_cookie.split('-')[1]
-	if make_cookie_secure(name).split('-')[1] == hashed_name:
+	name = hashed_name.split('-')[0]
+	hashed_section = hashed_name.split('-')[1]
+	if make_secure(name).split('-')[1] == hashed_section:
 		return name
 	else:
 		return None

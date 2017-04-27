@@ -6,15 +6,15 @@
 	<div class="row">
 		<div class="col-md-12">
 			<!-- submits a new post -->
-			<form class="form float-left" action='/newpost'>
+			<form class="form float-left" action='/post'>
 				<div class="form-group">
 					<button class="btn btn-success btn-lg">Insert New Post</button>
 				</div>
 			</form>
 			<!-- allows user to logout back to registration -->
-			<form class="form float-right" method="post" action='/blog'>
+			<form class="form float-right" method="post" action='/blog/logout'>
 				<div class="form-group">
-					<input class="btn btn-danger btn-sm right" type="submit" name="logout" value="Logout">
+					<button class="btn btn-danger btn-sm right" type="submit" name="logout">Logout</button>
 				</div>
 			</form>
 		</div>
@@ -49,7 +49,7 @@
 
 		<!-- allows user to rate posts -->
 		{% if blog_post.user != username %}
-			<form class= "form-inline right" method="post" action="/blog">
+			<form class= "form-inline right" method="post" action="/blog/rate-post">
 				{% if blog_post.key().id() == blog_id %}
 					<span class="text-danger lead">{{error}}</span>
 				{% endif %} 
@@ -79,11 +79,12 @@
 		{% endif %}
 
 		<!-- allows users to edit or delete posts -->
-		<form class="form-inline right" method="post" action="/blog">
+		<form class="form-inline right" method="post" action="/post">
 			{% if blog_post.user == username: %}
 				<div class="form-group">
-					<input class="btn btn-info btn-sm form-control" type="submit" name="edit" value="Edit Post">
-					<input class="btn btn-danger btn-sm form-control" type="submit" name="delete" value="Delete Post">
+					<input class="btn btn-info btn-sm form-control" type="submit" formaction="/post/edit" name="edit" value="Edit Post">
+					<input class="btn btn-danger btn-sm form-control" type="submit" formaction="/blog/delete-post" 
+					  formmethod="post" name="delete" value="Delete Post">
 				</div>
 			{% endif %}
 			<input type="hidden" name="blog-id" value="{{blog_post.key().id()}}">
@@ -119,11 +120,11 @@
 					<div class="col-md-12">
 						<strong>-{{comment.user}}</strong>
 						{% if comment.user == username %}
-							<form class="form-inline inline-block" method="post" action='/comment'>
+							<form class="form-inline inline-block" method="post" action='/comment/edit'>
 								<input class="btn btn-info btn-xs" type="submit" name ="edit-comment" value="Edit Comment">
 								<input type="hidden" name="comment-id" value="{{comment.key().id()}}">
 							</form>
-							<form class="form-inline inline-block" method="post" action='/blog'>
+							<form class="form-inline inline-block" method="post" action='/blog/delete-comment'>
 								<input class="btn btn-danger btn-xs" type="submit" name="delete-comment" value="Delete Comment">
 								<input type="hidden" name="comment-id" value="{{comment.key().id()}}">
 							</form>
