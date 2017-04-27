@@ -16,6 +16,9 @@ class CommentInsertHandler(Handler):
 			else: # updating old comment
 				comment_id = int(self.request.get('comment-id'))
 				super(CommentInsertHandler, self).check_valid_comment_id(comment_id)
+				if not super(CommentInsertHandler, self).check_user_owns_comment(comment_id):
+					self.response.set_cookie('username', None, path='/')
+					self.redirect('/registration')
 				comment_entity = Comment.get_by_id(comment_id, parent = self.root_comment_key)
 				comment_entity.comment = comment
 				comment_entity.put()

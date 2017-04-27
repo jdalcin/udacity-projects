@@ -34,12 +34,28 @@ class Handler(webapp2.RequestHandler):
 	def check_valid_blog_id(self, blog_id):
 		blog_entity = BlogPost.get_by_id(blog_id, parent = self.root_blog_key)
 		if not blog_entity:
+			self.response.set_cookie('username', None, path='/')
 			self.redirect('/registration')
 
 	def check_valid_comment_id(self, comment_id):
 		comment_entity = Comment.get_by_id(comment_id, parent = self.root_comment_key)
 		if not comment_entity:
+			self.response.set_cookie('username', None, path='/')
 			self.redirect('/registration')
+
+	def check_user_owns_comment(self, comment_id):
+		comment_entity = Comment.get_by_id(comment_id, parent = self.root_comment_key)
+		if comment_entity.user == self.logged_in_user:
+			return True
+		else:
+			return False
+
+	def check_user_owns_post(self, blog_id):
+		blog_entity = BlogPost.get_by_id(blog_id, parent = self.root_blog_key)
+		if blog_entity.user == self.logged_in_user:
+			return True
+		else:
+			return False
 
 	def render_string(self, template, **kwargs):
 		t = jinja_env.get_template(template)

@@ -6,6 +6,9 @@ class BlogRatePostHandler(Handler):
 		super(BlogRatePostHandler, self).check_valid_user(self.logged_in_user)
 		blog_id = int(self.request.get('blog-id'))
 		super(BlogRatePostHandler, self).check_valid_blog_id(blog_id)
+		if super(BlogRatePostHandler, self).check_user_owns_post(blog_id):
+			self.response.set_cookie('username', None, path='/')
+			self.redirect('/registration') # this means user owns post he tried to rate and attempted to alter source code from client side. Any user who does this is logged out and sent back to registration.
 		blog_entity = BlogPost.get_by_id(blog_id, parent = self.root_blog_key) # gets blog from input clicked
 		user_entity = User.get_by_key_name(self.logged_in_user) # gets user currently logged in
 		error = ''

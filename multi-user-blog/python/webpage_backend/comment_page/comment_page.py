@@ -5,6 +5,7 @@ class CommentHandler(Handler):
 
 	def get(self):
 		super(CommentHandler, self).check_valid_user(self.logged_in_user)
+		super(CommentHandler, self).check_valid_blog_id(int(self.request.get('blog-id')))
 		self.render('create-comment.html', username = self.logged_in_user, blog_id = self.request.get('blog-id'))
 
 	
