@@ -1,0 +1,31 @@
+* {
+	box-sizing: border-box;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+
+.edges {
+	border: 2px solid green;
+}
+ 
+.center-column {
+	float: none;
+	margin: 0 auto;
+}
+
+.center-file-input { /* use in conjunction with center-column */
+	position: relative;
+	left: 35px;
+}
+
+.vertical-margin {
+	margin: 15px 0;
+}
+
+.small {
+	font-size: 18px;
+}
+
+.medium {
+	font-size: 30px;
+}

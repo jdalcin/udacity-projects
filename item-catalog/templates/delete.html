@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h2>Delete Comment</h2>
+	<p>Are you sure?</p>
+	<br>
+	<form method="post" action="/{{item.name}}/delete">
+		<input type="submit" value="yes">
+		<input type="hidden" name="item-id" value="{{item.id}}">
+	</form>
+	<form action="/{{item.name}}">
+		<input type="submit" value="no">
+	</form>
+
+{% endblock %}

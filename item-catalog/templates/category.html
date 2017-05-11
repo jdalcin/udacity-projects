@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<h2>{{category}} Items({{item_count}} 
+		{% if item_count > 1 %}
+			items)
+		{% else %}
+			item)
+		{% endif %}
+	</h2>
+	<ol>
+		{% for item in item_list %}
+			<a href="/{{item.name}}"><li>{{item.name}}</li></a>
+		{% endfor %}
+	</ol>
+
+{% endblock %}

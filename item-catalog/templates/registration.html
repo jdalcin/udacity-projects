@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<h1>Registration</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 text-center center-column">
+			<form method="post" action="/registration">
+				<label>Username</label>
+				<input type="text" class="form-control" name="username" value="{{registration_details('username')}}" required>
+				<label>Password</label>
+				<input type="password" class="form-control" name="password" value="{{registration_details('password')}}" required>
+				<label>Verify Password</label>
+				<input type="password" class="form-control" name="verify-password" value="{{registration_details('verify-password')}}" required>
+				<label>Email</label>
+				<input type="text" class="form-control" name="email" value="{{registration_details('email')}}" required>
+				<label>Picture</label>
+				<input type="file" class="form-control-file center-column center-file-input" name="picture" value="{{registration_details('picture')}}">
+				<button class="btn btn-primary vertical-margin">Submit</button>
+				<input type="hidden" name="state" value="{{state}}">
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 text-center text-danger lead">
+			{{error}}
+		</div>
+	</div>
+{% endblock %}

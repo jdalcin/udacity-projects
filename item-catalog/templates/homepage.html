@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	{% includes 'header.html'}
+{% endblock %}
+
+
+
+
+
+<!-- {% extends 'base.html' %}
+
+{% block content %}
+
+	<h2>Does this work?</h2>
+	<a href="/item/add"><button >Add</button></a>
+
+	<section>
+		{% if category_list %}
+			Categories
+			<ul>
+				{% for category in category_list %}
+					<a href="/{{category}}/items"><li>{{category}}</li></a>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</section>
+
+	<section>
+		{% if item_list %}
+			Latest Items
+			<ol>
+				{% for item in item_list %}
+					<li>
+						<a href="/{{item.name}}">{{item.name}}</a> ({{item.category}})
+					</li>
+				{% endfor %}
+			</ol>
+		{% endif %}
+	</section>
+
+{% endblock %} -->
