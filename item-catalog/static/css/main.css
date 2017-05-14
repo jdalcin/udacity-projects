@@ -13,6 +13,10 @@
 	margin: 0 auto;
 }
 
+.right-column {
+	float: right;
+}
+
 .center-file-input { /* use in conjunction with center-column */
 	position: relative;
 	left: 35px;
@@ -28,4 +32,41 @@
 
 .medium {
 	font-size: 30px;
+}
+
+.white-background {
+	background-color:  white;
+	border: none;
+}
+
+.navbar-brand > img {
+      max-height: 100%;
+      height: 100%;
+      object-fit: contain;
+}
+
+.navbar-picture {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+}
+
+.white {
+	color: white;
+}
+
+.white:hover {
+	color: white;
+}
+
+.medium-photo {
+	height: 100px;
+	width: 100px;
+	object-fit: contain;
+}
+
+.large-photo {
+	height: 300px;
+	width: 300px;
+	object-fit: contain;
 }

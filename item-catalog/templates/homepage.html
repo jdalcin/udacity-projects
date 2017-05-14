@@ -1,42 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	{% includes 'header.html'}
+	{% include 'header.html' %}
+
+	<div class="row">
+		<div class="col-xs-12">
+			<h3>Categories</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<ul>
+				<div class="row">
+					<div class="col-xs-12">
+						{% for category in category_list %}
+							<li><a href="/category/{{category}}">{{category}}</a></li>
+						{% endfor %}
+					</div>
+				</div>
+			</ul>
+		</div>
+	</div>
+
+	{% if item_list %}
+		<div class="row">
+			<div class="col-xs-12">
+				<h3>Latest Items</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<ol>
+					<div class="row">
+						<div class="col-xs-12">
+							{% for item in item_list %}
+								<li><a href="/{{item.id}}">{{item.name}} ({{item.category}})</a></li>
+							{% endfor %}
+						</div>
+					</div>
+				</ol>
+			</div>
+		</div>
+	{% endif %}
+
 {% endblock %}
 
+<!-- {% if item_list %}
+	 		User-id: {{item_list[0]}}
+	 		<br>
+	 		Owner: {{name}}
+	 		<br>
+	 		Name: {{item_list[1]}}
+	 		<br>
+	 		Category: {{item_list[2]}}
+	 		<br>
+	 		Picture: {{item_list[3]}}
+	 		<br>
+	 		Description: {{item_list[4]}}
+	 		<br>
+	{% endif %} -->
 
 
 
-
-<!-- {% extends 'base.html' %}
-
-{% block content %}
-
-	<h2>Does this work?</h2>
-	<a href="/item/add"><button >Add</button></a>
-
-	<section>
-		{% if category_list %}
-			Categories
-			<ul>
-				{% for category in category_list %}
-					<a href="/{{category}}/items"><li>{{category}}</li></a>
-				{% endfor %}
-			</ul>
-		{% endif %}
-	</section>
-
-	<section>
-		{% if item_list %}
-			Latest Items
-			<ol>
-				{% for item in item_list %}
-					<li>
-						<a href="/{{item.name}}">{{item.name}}</a> ({{item.category}})
-					</li>
-				{% endfor %}
-			</ol>
-		{% endif %}
-	</section>
-
-{% endblock %} -->

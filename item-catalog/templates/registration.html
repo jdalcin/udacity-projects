@@ -8,7 +8,7 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-6 text-center center-column">
-			<form method="post" action="/registration">
+			<form method="post" action="/registration" enctype="multipart/form-data">
 				<label>Username</label>
 				<input type="text" class="form-control" name="username" value="{{registration_details('username')}}" required>
 				<label>Password</label>

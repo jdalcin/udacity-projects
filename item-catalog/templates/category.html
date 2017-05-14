@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-	<h2>{{category}} Items({{item_count}} 
-		{% if item_count > 1 %}
-			items)
-		{% else %}
-			item)
-		{% endif %}
-	</h2>
-	<ol>
-		{% for item in item_list %}
-			<a href="/{{item.name}}"><li>{{item.name}}</li></a>
-		{% endfor %}
-	</ol>
+	{% include 'header.html' %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h3>{{category_name}}</h3>
+		</div>
+	</div>
+	{% if item_list %}
+		<div class="row">
+			<div class="col-xs-12">
+				<ol>
+					<div class="row">
+						<div class="col-xs-12">
+							{% for item in item_list %}
+								<li><a href="/{{item.id}}">{{item.name}}</a></li>
+							{% endfor %}
+						</div>	
+					</div>
+				</ol>
+			</div>
+		</div>
+	{% endif %}
 
 {% endblock %}

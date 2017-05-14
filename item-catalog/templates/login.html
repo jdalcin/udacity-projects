@@ -6,8 +6,7 @@
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 		<!-- Prerequisites for google login -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
-  		</script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="//apis.google.com/js/platform.js?onload=start" async defer> </script>
 		<!-- end prerequisites -->
 	</head>
@@ -29,7 +28,7 @@
 							<label>Username</label>
 							<input type="text" class = "form-control" name="username" value="{{username}}" required>
 							<label>Password</label>
-							<input type="text" class="form-control" name="password" value="{{password}}" required>
+							<input type="password" class="form-control" name="password" value="{{password}}" required>
 							<input type="hidden" name="state" value="{{state}}">
 						</div>
 						<button type="submit" class="btn btn-primary">Login</button>
@@ -147,12 +146,16 @@
 						      success: function(result) {
 						        // Handle or verify the server response if necessary.
 						        if (result) {
-						          $('.toggle-display').hide()
-						          $('#result').html('Login Successful!<br>Redirecting...')
-						         setTimeout(function() {
-						          window.location.href = "{{url_for('homepage')}}";
-						         }, 4000);
-						          
+						        	if (result === 'username_taken') {
+						        		$('#result').html("Cannot use your account. Your username already matches a user on this website.");
+					            	 		$('#result').css('color', 'red');
+						        	} else {
+								$('.toggle-display').hide()
+								$('#result').html('Login Successful!<br>Redirecting...')
+								setTimeout(function() {
+								window.location.href = "{{url_for('homepage')}}";
+								}, 4000);
+						            }
 						      } else if (authResult['error']) {
 						    console.log('There was an error: ' + authResult['error']);
 						  } else {
