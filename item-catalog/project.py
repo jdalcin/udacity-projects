@@ -349,12 +349,20 @@ def homepage():
 def category_page(category_name):
 	if request.method == 'GET':
 		item_list = session.query(Item.name, Item.id).filter(Item.category == category_name).all()
+		if not category_name in category_list:
+			response = make_response(json.dumps("Invalid URL"), 401)
+			response.headers['Content-Type'] = 'application/json'
+			return response
 		return render_template('category.html', login_session = login_session, item_list = item_list, category_list = category_list, category_name = category_name)
 
 @app.route('/<item_id>', methods = ['GET', 'POST'])
 def item_page(item_id):
 	if request.method == 'GET':
 		item = session.query(Item).filter(Item.id == item_id).first()
+		if not item:
+			response = make_response(json.dumps("Invalid URL"), 401)
+			response.headers['Content-Type'] = 'application/json'
+			return response
 		owner = session.query(User).filter(User.id == item.user_id).scalar()
 		return render_template('item-info.html', owner = owner, item = item, category_list = category_list, login_session = login_session)
 
@@ -365,6 +373,10 @@ def delete(item_id):
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	item = session.query(Item).filter(Item.id == item_id).scalar()
+	if not item:
+		response = make_response(json.dumps("Invalid URL"), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
 	if item.user_id != login_session['user-id']:
 		response = make_response(json.dumps("Cannot Delete Other User's Content"), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -377,6 +389,10 @@ def delete(item_id):
 @app.route('/<item_id>/edit', methods = ['GET', 'POST'])
 def edit(item_id):
 	item = session.query(Item).filter(Item.id == item_id).first()
+	if not item:
+		response = make_response(json.dumps("Invalid URL"), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
 	if item.user_id != login_session['user-id']:
 		response = make_response(json.dumps("Cannot Edit Other User's Items "), 401)
 		response.headers['Content-Type'] = 'application/json'
@@ -438,6 +454,10 @@ def latest_items_JSON():
 @app.route('/category/<category_name>/JSON')
 def category_items(category_name):
 	if request.method == 'GET':
+		if not category_name in category_list:
+			response = make_response(json.dumps("Invalid URL"), 401)
+			response.headers['Content-Type'] = 'application/json'
+			return response
 		category_items = session.query(Item).filter(Item.category == category_name).all()
 		item_array = []
 		for item in category_items:
@@ -450,6 +470,10 @@ def category_items(category_name):
 def item_info(item_id):
 	if request.method == 'GET':
 		item = session.query(Item).filter(Item.id == item_id).first()
+		if not item:
+			response = make_response(json.dumps("Invalid URL"), 401)
+			response.headers['Content-Type'] = 'application/json'
+			return response
 		item_owner = session.query(User.name).filter(User.id == item.user_id).scalar()
 		item.item_owner_name = item_owner
 		return jsonify(item_info = item.serialize)
