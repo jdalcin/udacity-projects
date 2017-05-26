@@ -39,6 +39,16 @@
 	border: none;
 }
 
+.medium-black-font {
+	font-size: 20px;
+	color: black;
+
+}
+
+.medium-black-font:hover {
+	text-decoration: none;
+}
+
 .navbar-brand > img {
       max-height: 100%;
       height: 100%;
@@ -69,4 +79,13 @@
 	height: 300px;
 	width: 300px;
 	object-fit: contain;
+}
+
+.item-list {
+ 	background-color: #F0F0F0;
+ 	padding: 20px;
+}
+ .item-list:hover {
+ 	background-color: #e1e17f;
+ 	padding: 20px;
 }
