@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en-us">
+
+																		<!-- Head -->
+	<!-- Sets Responsive CSS -->
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Neighborhood Map</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+		<link rel="stylesheet" href="css/styles-homemade.css">
+	</head>
+
+																		<!-- Body -->
+	<body>
+																		<!-- HTML -->
+		<div class="container-fluid map-height">
+			<div class="row map-height text-center">
+				<!-- Options Screen -->
+				<div class="col-xs-4">
+					<div class="row">
+						<div class="col-xs-12">
+							<h1>Find Your Neighborhood</h1>
+						</div>
+					</div>
+					<!-- Show/Hide Spots -->
+					<div class="row md-top-margin">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="col-xs-6">
+									<input id="show-marked-spots" type="button" class="form-control blue-hover" data-bind="click: viewModel.showMarkedSpots" value="Show Marked Spots">
+								</div>
+								<div class="col-xs-6">
+									<input id="hide-marked-spots" type="button" class="form-control red-hover" data-bind="click: viewModel.hideMarkedSpots" value="Hide Marked Spots">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<hr>
+						</div>
+					</div>
+					<!-- Locate Neighborhood -->
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="form-inline">
+								<label>Locate Neighborhood:</label>
+								<input id="locateNeighborhood" class="form-control" data-bind="value: model.neighborhood" placeholder="Enter Your Neighborhood">
+								<input type="button" class="form-control red-hover" data-bind="click: viewModel.locateNeighborhood" value="Locate">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<hr>
+						</div>
+					</div>
+					<!-- Add Marked Spot -->
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="form-inline">
+								<label>Add Spot:</label>
+								<input id="addSpot" class="form-control" data-bind="value: model.latestLocationTitle" placeholder="Add a Marked Spot">
+								<input type="button" class="form-control red-hover" data-bind="click: viewModel.addLocation" value="Add">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<hr>
+						</div>
+					</div>
+					<!-- Outputs Neighborhood -->
+					<div id="neighborhood" class="row md-top-margin">
+						<div class="col-xs-12">
+							<h3>Neighborhood</h3>
+							<ul class="list-group" data-bind="visible: model.showNeighborhood">
+								<li class="list-group-item"><span data-bind="text: model.neighborhood"></span><span class="glyphicon glyphicon-remove exit" data-bind="click: viewModel.deleteNeighborhood"></span></li>
+							</ul>
+						</div>
+					</div>
+					<!-- Lists Marked Spots -->
+					<div id="marked-spots" class="row">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="col-xs-12">
+									<h3>Marked Spots in <span data-bind="text: model.neighborhood"></span></h3>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12">
+									<div id="search-marked-spots" class="form-inline">
+										<!-- Filters Marked Spot Labels and Markers -->
+										<label>Filter Spots:</label>
+										<input type="text" class="form-control" data-bind="textInput: model.locationFilterString, event: {keyup: viewModel.filterLocations}" placeholder="Search For a Marked Spot">
+									</div>
+								</div>
+							</div>
+							<div class="row sm-top-margin">
+								<div class="col-xs-12">
+									<ul id="marked-spots-list" class="list-group" data-bind="foreach: model.neighborhoodLocations">
+										<li class="list-group-item" data-bind="click: $parent.viewModel.checkLocation, attr: {id: 'location_' + $data.id}"><span data-bind="text: $data.title"></span><span class="glyphicon glyphicon-remove exit" data-bind="click: $parent.viewModel.deleteMarkedSpot"></span></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Map -->
+				<div class="col-xs-8 map-height zero-padding">
+					<div id="map"></div>
+				</div>
+			</div>
+		</div>
+																		<!-- JS Scripts -->
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/knockout-3.4.2.js"></script>
+		<script src="js/mapfunctionality.js"></script>
+		<script async defer
+			 src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCpOcdH-_GkS1giuLKAI1U0GEpXSPBxQHs&v=3&callback=initMap">
+    		</script>
+	</body>
+
+</html>
+
+
+
+<!-- EXTRA CODE -->
+
+	<!-- <div class="row">
+						<div class="col-xs-12">
+							<h4>Directions</h4>
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="control-label col-sm-3 text-right">From</label>
+									<div class="col-sm-9">
+										<input class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-3 text-right">To</label>
+									<div class="col-sm-9">
+										<input class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-6 text-right">
+										<select class="form-control">
+											<option>Drive</option>
+											<option>Walk</option>
+											<option>Transit</option>
+											<option>Bike</option>
+										</select>
+									</div>
+									<div class="col-xs-6 text-left">
+										<input type="button" class="form-control red-hover" styles="width:30px;" value="Go">
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<hr>
+						</div>
+					</div> -->
