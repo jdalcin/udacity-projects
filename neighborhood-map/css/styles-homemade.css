@@ -53,6 +53,10 @@ a:link {
 	height: 100%;
 }
 
+.center {
+	margin: 0 auto;
+}
+
 .marked-spot-clicked {
 	background-color: #00FF66;
 	box-shadow: 1px 1px #53a7ea, 2px 2px #53a7ea, 3px 3px #53a7ea;

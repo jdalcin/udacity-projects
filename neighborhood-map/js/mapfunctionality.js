@@ -19,58 +19,64 @@ function createMarker(location, id) {
 			id: id
 		});
 	marker['infoWindow'] = new google.maps.InfoWindow();
-	populateInfoWindow(marker['infoWindow'], marker);
 	marker.addListener('click', function() {
 		toggleBounce(this);
 		toggleInfoWindow(this);
 	});
+	console.log(marker['infoWindow']);
 	marker['infoWindow'].addListener('closeclick', function() {
 		toggleBounce(marker);
-		infoWindow.close();
+		toggleInfoWindow(marker);
 	});
 	MVVM.model.neighborhoodLocations.push(marker);
 }
 
 function populateInfoWindow(infoWindow, marker) {
-	streetView = new google.maps.StreetViewService();
+	var streetView = new google.maps.StreetViewService();
 	var radius = 50;
-	streetView.getPanoramaByLocation(marker.position, radius, getStreetView);
+	var infoWindowHTML = '';
+	infoWindow.setContent(infoWindowHTML);
 
 	function getStreetView(data, status) {
+		var streetViewHTML;
 	     if (status == google.maps.StreetViewStatus.OK) {
-	          var nearStreetViewLocation = data.location.latLng;
-	          var heading = google.maps.geometry.spherical.computeHeading(
-	              nearStreetViewLocation, marker.position);
-	          infoWindow.setContent('<div><h3>' + marker.title + '</h3></div><div id="pano_' + marker.id + '"></div>');
+	          var streetViewPosition = data.location.latLng;
+	          var heading = google.maps.geometry.spherical.computeHeading(streetViewPosition, marker.position);
+	          streetViewHTML = '<div id="pano_' + marker.id + '" class="center"></div>';
 	          var panoramaOptions = {
-	               position: nearStreetViewLocation,
-	               pov: { //pov:-> point of view
-	               heading: heading,
-	               pitch: 40 //slightly above the building
-	              	}
+	               position: streetViewPosition,
+	               pov: {heading: heading, pitch: 30}
 	          };
-	          	var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano_' + marker.id), panoramaOptions);
+	          infoWindowHTML += streetViewHTML;
+	     		infoWindow.setContent(infoWindowHTML);
+	          	new google.maps.StreetViewPanorama(document.getElementById('pano_' + marker.id), panoramaOptions);
 	     } else {
-	          infoWindow.setContent('<div>' + marker.title + '</div>' +
-	              '<div>No Street View Found</div>');
+	     		streetViewHTML = '<div>Street View not Found</div>';
+	     		infoWindowHTML += streetViewHTML;
+	     		infoWindow.setContent(infoWindowHTML);
 	     }
 	}
 
-	// var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
- //        $.ajax({
- //            url: wikiURL,
- //            dataType: "jsonp"
- //            }).done(function(response) {
- //                var articleStr = response[1];
- //                var URL = 'http://en.wikipedia.org/wiki/' + articleStr;
- //                // Use streetview service to get the closest streetview image within
- //                // 50 meters of the markers position
- //                console.log(infoWindow['streetview']);
- //               infoWindow['streetView'].getPanoramaByLocation(marker.position, radius, getStreetView);
- //                console.log(URL);
- //            }).fail(function (jqXHR, textStatus) {
- //                    alert("failed to load wikipedia");
- //               });
+    $.ajax({
+          url: 'http://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=' + marker.title,
+          dataType: "json",
+          success: function(results, status) {
+	        	if (status === 'success') {
+	        		var pages = results.query.pages;
+	        		var keys = Object.keys(pages);
+	        		var wikiHTML;
+	        		if (pages[keys[0]].extract !==  undefined) {
+	        			wikiHTML = pages[keys[0]].extract;
+	        		} else {
+	        			wikiHTML = 'No Wiki Information Found';
+	        		}
+	        	} else {
+	        		wikiHTML = 'Wiki Information Failed to Load';
+	        	}
+	        	infoWindowHTML += '<div><h3>' + marker.title + '</h3></div><div class="center"><p>' + wikiHTML + '</p></div>';
+	        	streetView.getPanoramaByLocation(marker.position, radius, getStreetView);
+          }
+     });
 
 }
 
@@ -89,8 +95,15 @@ function initMarkers() {
 }
 
 function toggleInfoWindow(marker) {
+	console.log(marker['infoWindow']);
 	infoWindow = marker['infoWindow'];
+	if ($('#location_' + marker.id).hasClass('marked-spot-clicked')) {
+		$('#location_' + marker.id).removeClass('marked-spot-clicked');
+	} else {
+		$('#location_' + marker.id).addClass('marked-spot-clicked');
+	}
 	if (!infoWindow.getMap()) {
+		populateInfoWindow(infoWindow, marker);
 		infoWindow.open(map, marker);
 	} else {
 		infoWindow.close();
@@ -99,7 +112,7 @@ function toggleInfoWindow(marker) {
 
 
 function toggleBounce(marker) {
-	if (marker.getAnimation() != null) {
+	if (marker.getAnimation()) {
 		marker.setAnimation(null);
 	} else {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -191,11 +204,6 @@ var MVVM = {
 			});
 		},
 		checkLocation: function(location) {
-			if ($('#location_' + location.id).hasClass('marked-spot-clicked')) {
-				$('#location_' + location.id).removeClass('marked-spot-clicked');
-			} else {
-				$('#location_' + location.id).addClass('marked-spot-clicked');
-			}
 			toggleBounce(location);
 			toggleInfoWindow(location);
 		},
@@ -237,16 +245,6 @@ var MVVM = {
 				}
 			});
 		},
-		autocomplete: function(data, event) {
-			// geocode(MVVM.model.neighborhood(), function(location) {
-			// 	var options = {
-			// 	location: location.position,
-			// 	radius: 50
-			// 	}
-			// 	var autocomplete = new google.maps.places.Autocomplete(document.getElementById(event.target.id), options);
-			// 	autocomplete.bindTo('bounds', map);
-			// });
-		},
 		check: function() {
 			console.log(MVVM.model.latestLocationTitle());
 		}
@@ -255,3 +253,23 @@ var MVVM = {
 
 }
 ko.applyBindings(MVVM);
+(function() {
+    if ( typeof Object.id == "undefined" ) {
+        var id = 0;
+
+        Object.id = function(o) {
+            if ( typeof o.__uniqueid == "undefined" ) {
+                Object.defineProperty(o, "__uniqueid", {
+                    value: ++id,
+                    enumerable: false,
+                    // This could go either way, depending on your
+                    // interpretation of what an "id" is
+                    writable: false
+                });
+            }
+
+            return o.__uniqueid;
+        };
+    }
+})();
+
