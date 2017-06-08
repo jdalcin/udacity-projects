@@ -1,6 +1,13 @@
 																		/* Global variables */
 var map;
 																		/* Initialize Map Functions */
+// Checks for Error in Requesting Map
+function mapError() {
+	setTimeout(function() {
+		alert("Map unable to load. Error requesting Google Maps API. Check Javascript console for error.");
+	}, 500);
+}
+
 // Initializes Google Map
 function initMap() {
 	var startingLocation = {
@@ -12,14 +19,12 @@ function initMap() {
 	var addSpotAutocomplete = new google.maps.places.Autocomplete(document.getElementById('addSpot'));
 	addSpotAutocomplete.bindTo('bounds', map);
 	google.maps.event.addListener(addSpotAutocomplete, 'place_changed', function() {
-			ko.utils.triggerEvent(document.getElementById('addSpot'), 'change');
-		});
+		ko.utils.triggerEvent(document.getElementById('addSpot'), 'change');
+	});
 	var locateNeighborhoodAutocomplete = new google.maps.places.Autocomplete(document.getElementById('locateNeighborhood'));
 	google.maps.event.addListener(locateNeighborhoodAutocomplete, 'place_changed', function() {
-			ko.utils.triggerEvent(document.getElementById('locateNeighborhood'), 'change');
-		});
-
-
+		ko.utils.triggerEvent(document.getElementById('locateNeighborhood'), 'change');
+	});
 }
 
 // Initializes Location Markers
@@ -66,13 +71,14 @@ function setBounds(locations) {
 		location.setMap(map);
 		bounds.extend(location.position);
 	});
-	map.fitBounds(bounds);
+	google.maps.event.addDomListener(window, 'resize', function() {
+  		map.fitBounds(bounds);
+	});
 }
 																				/* Toggle Functions */
 // Toggles Info Window on and off
 function toggleInfoWindow(marker) {
 	infoWindow = marker['infoWindow'];
-	console.log(marker['infoWindowHasMap']());
 	if (!infoWindow.getMap()) {
 		populateInfoWindow(infoWindow, marker);
 		infoWindow.open(map, marker);
@@ -140,6 +146,9 @@ function populateInfoWindow(infoWindow, marker) {
 	        	}
 	        	infoWindowHTML += '<div><h3>' + marker_title + '</h3></div><div class="center"><p>' + wikiHTML + '</p></div><div class="center"><p>Disclaimer: Information obtained from Wikipedia.</p></div>';
 	        	streetView.getPanoramaByLocation(marker.position, radius, getStreetView);
+          },
+          error: function(error) {
+          	alert("Wikipedia request failed. Check the Javascript console (Ctrl + Shift + i) for error.");
           }
      });
 
@@ -152,14 +161,16 @@ function geocode(address, extraCallback) {
 	geocoder.geocode({
 		address: address
      }, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
+             if (status == google.maps.GeocoderStatus.OK) {
                	var lat = results[0].geometry.location.lat();
                	var lng = results[0].geometry.location.lng();
                	location = {
                		title: address,
                		position: {lat: lat, lng: lng}
-               	}
+               	};
                	extraCallback(location);
+		} else {
+			alert("Failed to find address. Google Geocode API failing request. Check Javascript console for error.");
 		}
 	});
 }
@@ -168,19 +179,16 @@ var MVVM = {
 
 	// Data
 	model: {
-
 		neighborhood: ko.observable('Baltimore'),
 		neighborhoodCopy: ko.observable('Baltimore'), // copy only updated once neighborhood change is confirmed
 		neighborhoodLocations: ko.observableArray(),
 		latestLocationTitle: ko.observable(), // latest Marker Location Title Added to the Location List
 		showNeighborhood: ko.observable(true), // tells whether neighborhood box is displayed in DOM
 		locationFilterString: ko.observable('')
-
 	},
 
 	// Functions to manipulate data in the model
 	viewModel: {
-
 		locateNeighborhood: function() { // centers on a neighborhood and deletes all markers
 			if(MVVM.model.neighborhood() != MVVM.model.neighborhoodCopy() && (MVVM.model.neighborhoodLocations().length == 0 || confirm('Changing Locations deletes all saved spots. Are you sure?'))) {
 				geocode(MVVM.model.neighborhood(), function(location) {
@@ -189,7 +197,7 @@ var MVVM = {
 					MVVM.model.showNeighborhood(true);
 				});
 				MVVM.viewModel.deleteSpots();
-				MVVM.model.neighborhoodCopy(MVVM.model.neighborhood())
+				MVVM.model.neighborhoodCopy(MVVM.model.neighborhood());
 			}
 		},
 		addLocation: function() { // adds a marker
@@ -249,7 +257,7 @@ var MVVM = {
 		}
 	}
 
-}
+};
 
 // Binds DOM Variables to Javascript Variables in the MVVM
 ko.applyBindings(MVVM);
