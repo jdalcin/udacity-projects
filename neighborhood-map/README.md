@@ -3,7 +3,7 @@
 ## Website Access
 
 1. Open file index.html using your favorite browser.
-2. Welcome to the Website!
+2. Welcome to the website!
 
 ### Third-Party API's
 
