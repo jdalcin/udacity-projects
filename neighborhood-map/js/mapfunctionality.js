@@ -1,16 +1,43 @@
+																		/* Global variables */
 var map;
-var markerIndex = 0;
-var infoWindow;
+																		/* Initialize Map Functions */
+// Initializes Google Map
+function initMap() {
+	var startingLocation = {
+		center: {lat: 39.283629, lng: -76.609211},
+		zoom: 16
+	};
+	map = new google.maps.Map(document.getElementById('map'), startingLocation);
+	initMarkers();
+	var addSpotAutocomplete = new google.maps.places.Autocomplete(document.getElementById('addSpot'));
+	addSpotAutocomplete.bindTo('bounds', map);
+	google.maps.event.addListener(addSpotAutocomplete, 'place_changed', function() {
+			ko.utils.triggerEvent(document.getElementById('addSpot'), 'change');
+		});
+	var locateNeighborhoodAutocomplete = new google.maps.places.Autocomplete(document.getElementById('locateNeighborhood'));
+	google.maps.event.addListener(locateNeighborhoodAutocomplete, 'place_changed', function() {
+			ko.utils.triggerEvent(document.getElementById('locateNeighborhood'), 'change');
+		});
 
-function setBounds(locations) {
-	var bounds = new google.maps.LatLngBounds();
-	locations.forEach(function(location) {
-		location.setMap(map);
-		bounds.extend(location.position);
-	});
-	map.fitBounds(bounds);
+
 }
 
+// Initializes Location Markers
+function initMarkers() {
+	var defaultLocations = [
+		{title: 'Inner Harbor', position: {lat: 39.285848, lng: -76.613111}},
+		{title: 'National Aquarium', position: {lat: 39.285095, lng: -76.608287}},
+		{title: 'Marriot Waterfront', position: {lat: 39.283137, lng: -76.602798}},
+		{title: 'Federal Hill Park', position: {lat: 39.279721, lng: -76.608462}},
+		{title: 'Star-Spangled Banner Historic Trail', position: {lat: 39.265293, lng: -76.579640}}
+	];
+	defaultLocations.forEach(function(location, i) {
+		createMarker(location, i);
+	});
+	setBounds(MVVM.model.neighborhoodLocations());
+}
+
+// Creates a Location Marker
 function createMarker(location, id) {
 	var marker = new google.maps.Marker({
 			position: location.position,
@@ -19,24 +46,61 @@ function createMarker(location, id) {
 			id: id
 		});
 	marker['infoWindow'] = new google.maps.InfoWindow();
+	marker['infoWindowHasMap'] = ko.observable(false);
+	// adds a listener to a marker and the info window associated with it
 	marker.addListener('click', function() {
 		toggleBounce(this);
 		toggleInfoWindow(this);
 	});
-	console.log(marker['infoWindow']);
 	marker['infoWindow'].addListener('closeclick', function() {
 		toggleBounce(marker);
-		toggleInfoWindow(marker);
+		marker['infoWindowHasMap'](false);
 	});
 	MVVM.model.neighborhoodLocations.push(marker);
 }
 
+// Sets Map Bounds Around Location Markers
+function setBounds(locations) {
+	var bounds = new google.maps.LatLngBounds();
+	locations.forEach(function(location) {
+		location.setMap(map);
+		bounds.extend(location.position);
+	});
+	map.fitBounds(bounds);
+}
+																				/* Toggle Functions */
+// Toggles Info Window on and off
+function toggleInfoWindow(marker) {
+	infoWindow = marker['infoWindow'];
+	console.log(marker['infoWindowHasMap']());
+	if (!infoWindow.getMap()) {
+		populateInfoWindow(infoWindow, marker);
+		infoWindow.open(map, marker);
+		marker['infoWindowHasMap'](true);
+	} else {
+		infoWindow.close();
+		marker['infoWindowHasMap'](false);
+	}
+}
+
+// Toggles Marker's Bounce Animation on and off
+function toggleBounce(marker) {
+	if (marker.getAnimation()) {
+		marker.setAnimation(null);
+	} else {
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+	}
+}
+																		/* Info Window Functions */
+// Populates Information in Info Window
 function populateInfoWindow(infoWindow, marker) {
 	var streetView = new google.maps.StreetViewService();
 	var radius = 50;
+	var marker_title = marker.title.split(',')[0];
 	var infoWindowHTML = '';
 	infoWindow.setContent(infoWindowHTML);
 
+	// Adds Google Street View of Marker Location to Info Window
 	function getStreetView(data, status) {
 		var streetViewHTML;
 	     if (status == google.maps.StreetViewStatus.OK) {
@@ -57,8 +121,9 @@ function populateInfoWindow(infoWindow, marker) {
 	     }
 	}
 
+    // Adds Wiki Information of Marker Location to Info Window
     $.ajax({
-          url: 'http://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=' + marker.title,
+          url: 'http://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=' + marker_title,
           dataType: "json",
           success: function(results, status) {
 	        	if (status === 'success') {
@@ -73,77 +138,14 @@ function populateInfoWindow(infoWindow, marker) {
 	        	} else {
 	        		wikiHTML = 'Wiki Information Failed to Load';
 	        	}
-	        	infoWindowHTML += '<div><h3>' + marker.title + '</h3></div><div class="center"><p>' + wikiHTML + '</p></div>';
+	        	infoWindowHTML += '<div><h3>' + marker_title + '</h3></div><div class="center"><p>' + wikiHTML + '</p></div><div class="center"><p>Disclaimer: Information obtained from Wikipedia.</p></div>';
 	        	streetView.getPanoramaByLocation(marker.position, radius, getStreetView);
           }
      });
 
 }
-
-function initMarkers() {
-	var defaultLocations = [
-		{title: 'Inner Harbor', position: {lat: 39.285848, lng: -76.613111}},
-		{title: 'National Aquarium', position: {lat: 39.285095, lng: -76.608287}},
-		{title: 'Marriot Waterfront', position: {lat: 39.283137, lng: -76.602798}},
-		{title: 'Federal Hill Park', position: {lat: 39.279721, lng: -76.608462}},
-		{title: 'Star-Spangled Banner Historic Trail', position: {lat: 39.265293, lng: -76.579640}}
-	];
-	defaultLocations.forEach(function(location, i) {
-		createMarker(location, i);
-	});
-	setBounds(MVVM.model.neighborhoodLocations());
-}
-
-function toggleInfoWindow(marker) {
-	console.log(marker['infoWindow']);
-	infoWindow = marker['infoWindow'];
-	if ($('#location_' + marker.id).hasClass('marked-spot-clicked')) {
-		$('#location_' + marker.id).removeClass('marked-spot-clicked');
-	} else {
-		$('#location_' + marker.id).addClass('marked-spot-clicked');
-	}
-	if (!infoWindow.getMap()) {
-		populateInfoWindow(infoWindow, marker);
-		infoWindow.open(map, marker);
-	} else {
-		infoWindow.close();
-	}
-}
-
-
-function toggleBounce(marker) {
-	if (marker.getAnimation()) {
-		marker.setAnimation(null);
-	} else {
-		marker.setAnimation(google.maps.Animation.BOUNCE);
-	}
-}
-
-function initMap() {
-	var startingLocation = {
-		center: {lat: 39.283629, lng: -76.609211},
-		zoom: 16
-	};
-	map = new google.maps.Map(document.getElementById('map'), startingLocation);
-	initMarkers();
-	initAutocomplete('addSpot', function(autocomplete) {
-		autocomplete.bindTo('bounds', map);
-		google.maps.event.addListener(autocomplete, 'place_changed', function() {
-			MVVM.model.latestLocationTitle($('#addSpot').val());
-		});
-	});
-	initAutocomplete('locateNeighborhood', function(autocomplete) {
-		google.maps.event.addListener(autocomplete, 'place_changed', function() {
-			MVVM.model.neighborhood($('#locateNeighborhood').val());
-		});
-	});
-}
-
-function initAutocomplete(elementId, addOptions) {
-	var autocomplete = new google.maps.places.Autocomplete(document.getElementById(elementId));
-	addOptions(autocomplete);
-}
-
+																			/* Search Functions */
+// Gets Longitude and Latitude Coordinates of an Address
 function geocode(address, extraCallback) {
 	var geocoder = new google.maps.Geocoder();
 	var location;
@@ -161,47 +163,49 @@ function geocode(address, extraCallback) {
 		}
 	});
 }
-
+																			/* Code Organized by Model View ViewModel Paradigm */
 var MVVM = {
 
+	// Data
 	model: {
 
 		neighborhood: ko.observable('Baltimore'),
-		neighborhoodCopy: 'Baltimore', // non-observable copy of variable
+		neighborhoodCopy: ko.observable('Baltimore'), // copy only updated once neighborhood change is confirmed
 		neighborhoodLocations: ko.observableArray(),
-		latestLocationTitle: ko.observable(),
-		showNeighborhood: ko.observable(true),
-		locationFilterString: ko.observable()
+		latestLocationTitle: ko.observable(), // latest Marker Location Title Added to the Location List
+		showNeighborhood: ko.observable(true), // tells whether neighborhood box is displayed in DOM
+		locationFilterString: ko.observable('')
 
 	},
 
+	// Functions to manipulate data in the model
 	viewModel: {
 
-		locateNeighborhood: function() {
-			if(MVVM.model.neighborhood() != MVVM.model.neighborhoodCopy && confirm('Changing Locations deletes all saved spots. Are you sure?')) {
+		locateNeighborhood: function() { // centers on a neighborhood and deletes all markers
+			if(MVVM.model.neighborhood() != MVVM.model.neighborhoodCopy() && (MVVM.model.neighborhoodLocations().length == 0 || confirm('Changing Locations deletes all saved spots. Are you sure?'))) {
 				geocode(MVVM.model.neighborhood(), function(location) {
 					map.setCenter(location.position);
 					map.setZoom(14);
 					MVVM.model.showNeighborhood(true);
 				});
 				MVVM.viewModel.deleteSpots();
-				MVVM.model.neighborhoodCopy = MVVM.model.neighborhood();
-			} else {
-				MVVM.model.neighborhood(MVVM.model.neighborhoodCopy);
+				MVVM.model.neighborhoodCopy(MVVM.model.neighborhood())
 			}
 		},
-		addLocation: function() {
-			var location = geocode(MVVM.model.latestLocationTitle(), function(location) {
-				var locationsArray = MVVM.model.neighborhoodLocations();
-				if (locationsArray != 0) {
-	               		var id = locationsArray[locationsArray.length - 1].id + 1;
-	               	} else {
-	               		id = 0;
-	               	}
-	               	createMarker(location, id);
-	               	setBounds(MVVM.model.neighborhoodLocations());
-	               	MVVM.viewModel.showMarkedSpots();
-			});
+		addLocation: function() { // adds a marker
+			if (MVVM.model.latestLocationTitle() != undefined) {
+				var location = geocode(MVVM.model.latestLocationTitle(), function(location) {
+					var locationsArray = MVVM.model.neighborhoodLocations();
+					if (locationsArray != 0) {
+		               		var id = locationsArray[locationsArray.length - 1].id + 1;
+		               	} else {
+		               		id = 0;
+		               	}
+		               	createMarker(location, id);
+		               	setBounds(MVVM.model.neighborhoodLocations());
+		               	MVVM.viewModel.showMarkedSpots();
+				});
+			}
 		},
 		checkLocation: function(location) {
 			toggleBounce(location);
@@ -220,8 +224,8 @@ var MVVM = {
 			MVVM.model.neighborhoodLocations.remove(location);
 			MVVM.viewModel.showMarkedSpots();
 		},
-		deleteNeighborhood: function() {
-			if (confirm('Deleting the neighborhood deletes all saved spots. Are you sure?')) {
+		deleteNeighborhood: function() { // deletes a neighborhood and all its markers
+			if (MVVM.model.neighborhoodLocations().length == 0 || confirm('Deleting the neighborhood deletes all saved spots. Are you sure?')) {
 				MVVM.model.neighborhood(null);
 				MVVM.model.showNeighborhood(false);
 				MVVM.viewModel.deleteSpots();
@@ -233,43 +237,21 @@ var MVVM = {
 			});
 			MVVM.model.neighborhoodLocations.removeAll();
 		},
-		filterLocations: function() {
-			MVVM.model.neighborhoodLocations().forEach(function(location) {
-				var filterString = MVVM.model.locationFilterString();
-				if (filterString == '' || location.title.toUpperCase().includes(filterString.toUpperCase())) {
-					location.setMap(map);
-					$('#location_' + location.id).show();
-				} else {
-					location.setMap(null);
-					$('#location_' + location.id).hide();
-				}
-			});
-		},
-		check: function() {
-			console.log(MVVM.model.latestLocationTitle());
+		filterLocations: function(location) { // filters markers in real time based on what is typed in the filter box
+			var filterString = MVVM.model.locationFilterString();
+			if (filterString == '' || location.title.toUpperCase().includes(filterString.toUpperCase())) {
+				location.setMap(map);
+				return true;
+			} else {
+				location.setMap(null);
+				return false;
+			}
 		}
-
 	}
 
 }
+
+// Binds DOM Variables to Javascript Variables in the MVVM
 ko.applyBindings(MVVM);
-(function() {
-    if ( typeof Object.id == "undefined" ) {
-        var id = 0;
 
-        Object.id = function(o) {
-            if ( typeof o.__uniqueid == "undefined" ) {
-                Object.defineProperty(o, "__uniqueid", {
-                    value: ++id,
-                    enumerable: false,
-                    // This could go either way, depending on your
-                    // interpretation of what an "id" is
-                    writable: false
-                });
-            }
-
-            return o.__uniqueid;
-        };
-    }
-})();
 
