@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en-us">
+
+	<head>
+		<title>Login Page</title>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+		<!-- Prerequisites for google login -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="//apis.google.com/js/platform.js?onload=start" async defer> </script>
+		<!-- end prerequisites -->
+	</head>
+
+	<body>
+
+		<div class="container">
+
+			<!-- FIRST-PARTY AUTHENTICATION -->
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h1>Login</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<form method="post" action="/login/submit" class="form-inline text-center" >
+						<div class="form-group">
+							<label>Username</label>
+							<input type="text" class = "form-control" name="username" value="{{username}}" required>
+							<label>Password</label>
+							<input type="password" class="form-control" name="password" value="{{password}}" required>
+							<input type="hidden" name="state" value="{{state}}">
+						</div>
+						<button type="submit" class="btn btn-primary">Login</button>
+					</form>
+				</div>
+			</div>
+			<div class="row text-center">
+				<div class="col-xs-12">
+					<span class="text-danger lead">{{error}}</span>
+				</div>
+			</div>
+
+			
+			<!-- THIRD-PARTY AUTHENTICATION -->
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<h2>Third-Party Logins</h2>
+				</div>
+			</div>
+			<div class="row">
+				<!-- Facebook login button -->
+				<div class="col-xs-6 text-right">
+					<fb:login-button data-size="large" scope="public_profile, email" onlogin="sendTokenToServer();">
+		     				Login with Facebook
+		    			</fb:login-button>
+
+					<script>
+					    // load the fb javascript SDK first
+					    window.fbAsyncInit = function() {
+					      FB.init({
+					        appId      : '792271364271541',
+					        cookie     : true,  // enable cookies to allow the server to access 
+					                            // the session
+					        xfbml      : true,  // parse social plugins on this page
+					        version    : 'v2.8' // use version 2.8
+					      });
+					    };
+
+					    // Load the SDK asynchronously
+
+					    (function(d, s, id) {
+					      var js, fjs = d.getElementsByTagName(s)[0];
+					      if (d.getElementById(id)) return;
+					      js = d.createElement(s); js.id = id;
+					      js.src = "//connect.facebook.net/en_US/sdk.js";
+					      fjs.parentNode.insertBefore(js, fjs);
+					    }(document, 'script', 'facebook-jssdk'));
+
+
+					    function sendTokenToServer() {
+					      var access_token = FB.getAuthResponse()['accessToken'];
+
+					      console.log(access_token);
+
+					      console.log('Welcome!  Fetching your information.... ');
+
+					      FB.api('/me', function(response) {
+					        console.log('Successful login for: ' + response.name);
+					        $.ajax({
+					          type: 'POST',
+					          url: '/login/facebook-login?state={{state}}',
+					          processData: false,
+					          data: access_token,
+					          contentType: 'application/octet-stream; charset=utf-8',
+					          success: function(result) {
+					            // Handle or verify the server response if necessary.
+					            if (result) {
+					            	 if (result === 'username_taken') {
+					            	 	$('#result').html("Cannot use your account. Your username already matches a user on this website.");
+					            	 	$('#result').css('color', 'red');
+					            	 } else {
+						            	 $('.toggle-display').hide();
+						              $('#result').html('Login Successful!<br>Redirecting...');
+						              setTimeout(function() {
+						                window.location.href = "{{url_for('homepage')}}";
+						              }, 4000);  
+						 }
+					            } else {
+					              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+					            }
+					          }
+					        });
+					      });
+					    }
+					  </script>
+				</div>
+				<!-- End facebook button -->
+
+				<!-- Google+ Login Button -->
+				<div class="col-xs-6">
+					<div id="signInButton">
+				          <span class="g-signin"
+				            data-scope="openid email"
+				            data-clientid="174999044103-jp1nkpgbaciekbvoebrq39qvilmookut.apps.googleusercontent.com"
+				            data-redirecturi="postmessage"
+				            data-accesstype="offline"
+				            data-cookiepolicy="single_host_origin"
+				            data-callback="signInCallback"
+				            data-approvalprompt="force">
+				          </span>
+		          		</div>
+
+					<script>
+						function signInCallback(authResult) {
+						  if (authResult['code']) {
+						    // Hide the sign-in button now that the user is authorized
+						    $('#signinButton').attr('style', 'display: none');
+						    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+						    $.ajax({
+						      type: 'POST',
+						      url: '/login/google-login?state={{state}}',
+						      processData: false,
+						      data: authResult['code'],
+						      contentType: 'application/octet-stream; charset=utf-8',
+						      success: function(result) {
+						        // Handle or verify the server response if necessary.
+						        if (result) {
+						        	if (result === 'username_taken') {
+						        		$('#result').html("Cannot use your account. Your username already matches a user on this website.");
+					            	 		$('#result').css('color', 'red');
+						        	} else {
+								$('.toggle-display').hide()
+								$('#result').html('Login Successful!<br>Redirecting...')
+								setTimeout(function() {
+								window.location.href = "{{url_for('homepage')}}";
+								}, 4000);
+						            }
+						      } else if (authResult['error']) {
+						    console.log('There was an error: ' + authResult['error']);
+						  } else {
+						        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+						         }
+						      }
+						      
+						  }); } }
+					</script>
+				</div>
+				<!-- End Google+ Login Button -->
+			</div>
+
+			<!-- Output of sign in from third-party authentication -->
+			<div class="row">
+				<div class="col-xs-12 text-center small">
+					<div id="result"></div>
+				</div>
+			</div>
+			
+
+			<div class="row toggle-display">
+				<div class="col-xs-12">
+					<div class="row">
+						<div class="col-xs-12 text-center small">
+							Not a registered user? 
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 text-center">
+							<a href="/registration"><span class="medium text-important">Register</span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+
+</html>
