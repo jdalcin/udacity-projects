@@ -1,0 +1,238 @@
+* {
+	box-sizing: border-box;
+}
+
+img {
+	height: 100%;
+	width: 100%;
+	object-fit: cover;
+}
+
+a {
+	color: white;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+h3 {
+	font-weight: bold;
+}
+
+.slideShow {
+	position: relative;
+}
+
+.placeholder {
+	height: 1080px;
+	visibility: hidden;
+}
+
+.layer1,
+.layer2,
+.layer3,
+.layer4,
+.layer5,
+.layer6,
+.layer7,
+.layer8 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.layer1 {
+	background-image: url(img/layer1.png);
+	animation: layer1Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer2 {
+	background-image: url(img/layer2.png);
+	animation: layer2Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer3 {
+	background-image: url(img/layer3.png);
+	animation: layer3Anim 40s infinite;
+}
+
+.layer4 {
+	background-image: url(img/layer4.png);
+	animation: layer4Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer5 {
+	background-image: url(img/layer5.png);
+	animation: layer5Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer6 {
+	background-image: url(img/layer6.png);
+	animation: layer6Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer7 {
+	background-image: url(img/layer7.png);
+	animation: layer7Anim 40s infinite;
+	z-index: 1;
+}
+
+.layer8 {
+	background-image: url(img/layer8.png);
+	animation: layer8Anim 40s infinite;
+	z-index: 1;
+}
+
+.overlay {
+	background-image: url(img/overlay-main.png);
+	background-attachment: fixed;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+
+
+.slideShowButtons  {
+    position: absolute;
+    font-size: 2vw;
+    color: #fff;
+    text-shadow: 3px 3px 6px #000;
+    top: 48%;
+    left: 28%;
+    width: 50%;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+}
+
+.slideShowButtons .buttons {
+	float: left;
+	width: 28%;
+	border: 2px white solid;
+	margin: 0 auto;
+	border-radius: 5px;
+	text-align: center;
+	transition: all ease 1s;
+	animation: fadeIn 3s;
+}
+
+.slideShowButtons > .buttons:hover {
+	box-shadow: inset 0 100px 0 0 #31302B;
+	color: #FFF;
+}
+
+@keyframes fadeIn {
+	from {opacity:0;}
+	to {opacity: 1;}
+}
+
+@keyframes layer1Anim {
+	0%{opacity:1;}
+	10.5%{opacity:1;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:1;}
+}
+
+@keyframes layer2Anim {
+	0%{opacity:0;}
+	12.5%{opacity:1;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer3Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:1;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer4Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:1;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer5Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:1;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer6Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:1;}
+	75%{opacity:0;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer7Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:1;}
+	87.5%{opacity:0;}
+	100%{opacity:0;}
+}
+
+@keyframes layer8Anim {
+	0%{opacity:0;}
+	12.5%{opacity:0;}
+	25%{opacity:0;}
+	37.5%{opacity:0;}
+	50%{opacity:0;}
+	62.5%{opacity:0;}
+	75%{opacity:0;}
+	87.5%{opacity:1;}
+	100%{opacity:0;}
+}
