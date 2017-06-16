@@ -25,6 +25,9 @@ function getCookie(c_name)
 var song = document.getElementById('song');
 var played = false;
 var tillPlayed = getCookie('timePlayed');
+if (window.location.href == 'http://online-portfolio-165704.appspot.com/') {
+    tillPlayed = null;
+}
 function update()
 {
     if(!played){
