@@ -25,9 +25,10 @@ function getCookie(c_name)
 var song = document.getElementById('song');
 var played = false;
 var tillPlayed = getCookie('timePlayed');
-if (window.location.href == 'http://online-portfolio-165704.appspot.com/') {
+if (window.location.href == 'http://dalcinwebdesign.appspot.com/' || window.location.href == 'http://dalcinwebdesign.appspot.com/#contact') {
     tillPlayed = null;
 }
+console.log(window.location.href);
 function update()
 {
     if(!played){
