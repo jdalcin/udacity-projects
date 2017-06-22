@@ -1,31 +1,27 @@
-img {
-	height:100%;
-	width: 100%;
-	object-fit: contain;
+.resume {
+	background: linear-gradient(to right, #000000, #434343);
 }
 
-.resume {
-	position: relative;
-	height: 100vh;
-	width: 100vw;
-	background: linear-gradient(to right, #000000, #434343);
+.resume-size {
+	object-fit: contain;
 }
 
 .resume-position {
 	float: left;
 	width: 50%;
-	height: 100%;
+	height: 100vh;
 }
 
 .button-position {
+	position: relative;
 	float: left;
 	width: 25%;
-	height: 100%;
+	height: 100vh;
 }
 
 .button {
 	position: absolute;
-	width: 12.5%;
+	width: 50%;
 	font-size: 2vw;
 	color: #fff;
 	text-shadow: 3px 3px 6px #000;
@@ -42,9 +38,64 @@ img {
 }
 
 .left {
-	left: 6.25%;
+	left: 25%;
 }
 
 .right {
-	right: 6.25%;
+	right: 25%;
+}
+
+@media screen and (min-width: 800px) and (max-width: 1339px) {
+
+	.resume-position {
+		float: left;
+		width: 70%;
+	}
+
+	.button-position {
+		float: right;
+		width: 15%;
+	}
+
+	.button {
+		width: 190%;
+		font-size: 4vw;
+	}
+
+	.left {
+		left: 0;
+		top: 35%;
+		left: -90%;
+	}
+
+	.right {
+		top: 45%;
+		right: 0;
+		left: 10%;
+	}
+}
+
+@media screen and (max-width: 799px) {
+
+	.button-position {
+		float: none;
+		height: 10vw;
+		width: 100%;
+	}
+
+	.button {
+		position: static;
+		font-size: 6vw;
+		margin: 0 auto;
+	}
+
+	.resume-position {
+		float: none;
+		width: 100%;
+	}
+
+	.resume-size {
+		object-fit: fill;
+		overflow: scroll;
+	}
 }

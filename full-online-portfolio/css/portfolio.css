@@ -6,19 +6,15 @@
 }
 
 .portfolio {
-	background-color: #00BCD4;
 	background: linear-gradient(to right, #0cebeb, #20e3b2, #29ffc6);
 	border-radius: 2px;
 }
 
-.equidistant-space {
-	display: flex;
-	justify-content: space-between;
-}
-
 .portfolio-project {
-	width: 15%;
+	width: 100%;
+	max-width: 300px;
 	height: 400px;
+	margin: 0 auto;
 	background-color: #FFFFFF;
 	border: 1px black solid;
 	border-radius: 2px;
@@ -31,7 +27,6 @@
 }
 
 .wrap {
-	margin: 0;
 	position: relative;
 	height: 50%;
 	width: 100%;
@@ -71,3 +66,8 @@
 	font-weight: bold;
 }
 
+@media all and (max-width: 480px) {
+	.title {
+		font-size: 15vw;
+	}
+}
