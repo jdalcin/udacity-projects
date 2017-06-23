@@ -136,6 +136,21 @@ h3 {
 	color: #FFF;
 }
 
+@media screen and (max-width: 950px) {
+
+	.slideShowButtons {
+		font-size: 20px;
+		width: 100%;
+		left: 0;
+	}
+
+	.slideShowButtons .buttons {
+		min-height: 57px;
+		min-width: 57px;
+		line-height: 57px;
+	}
+}
+
 @keyframes fadeIn {
 	from {opacity:0;}
 	to {opacity: 1;}
