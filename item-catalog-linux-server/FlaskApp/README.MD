@@ -4,7 +4,7 @@ This is a craiglist-like website called "Item Catalog" secured and hosted from a
 
 # Website Access 
 
-Visit http://ec2-13-58-164-182.us-east-2.compute.amazonaws.com
+Visit http://ec2-18-220-243-76.us-east-2.compute.amazonaws.com/
 
 # Server Information
 
