@@ -81,7 +81,7 @@ def allowed_file(filename):
 
 # takes in a flask File object, int file_id, and subfolder which represents  a string of subfolder of File lies in
 # returns the string url for an uploaded file.
-# each file is specific to its item. 
+# each file is specific to its item.
 def upload_file(file, file_id, subfolder):
 	if file and allowed_file(file.filename):
 		filename = secure_filename(file.filename)
@@ -143,7 +143,7 @@ def login_screen():
 		state = create_state_token()
 		login_session['state'] = state
 		return render_template('login.html', state = state)
-	
+
 
 @app.route('/login/submit', methods = ['POST'])
 def first_party_login():
@@ -155,7 +155,7 @@ def first_party_login():
 			response = make_response(json.dumps('Invalid State Parameter'), 401)
 			response.headers['Content-Type'] = 'application/json'
 			return response
-		if session.query(exists().where(func.lower(Users.name) == username.lower())).scalar():			
+		if session.query(exists().where(func.lower(Users.name) == username.lower())).scalar():
 			encrypted_password = session.query(Users.encrypted_password).filter(func.lower(Users.name) == username.lower()).scalar()
 			if encrypt.validate_login(username, password, encrypted_password):
 				login_session['user-id'] = get_user_id(name = username)
