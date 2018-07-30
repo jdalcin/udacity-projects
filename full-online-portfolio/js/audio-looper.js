@@ -25,7 +25,7 @@ function getCookie(c_name)
 var song = document.getElementById('song');
 var played = false;
 var tillPlayed = getCookie('timePlayed');
-if (window.location.href == 'http://dalcinwebdesign.appspot.com/' || window.location.href == 'http://dalcinwebdesign.appspot.com/#contact') {
+if (window.location.href == 'http://dalcindesign.appspot.com/' || window.location.href == 'http://dalcindesign.appspot.com/#contact') {
     tillPlayed = null;
 }
 console.log(window.location.href);
