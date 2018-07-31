@@ -135,6 +135,12 @@ def registration_screen():
 			error = "Name already taken"
 		return render_template('registration.html', registration_details = return_value(registration_details), state = request.form.get('state'), error = error)
 
+# Creates privacy policy page
+@app.route('/privacy-policy', methods = ['GET'])
+def privacy_policy():
+	if request.method == 'GET':
+		return render_template('privacy-policy.html')
+
 # Creates login screen
 @app.route('/login', methods = ['GET'])
 def login_screen():
