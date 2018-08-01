@@ -21,7 +21,7 @@ from setup_database import Base, Users, Item
 
 # Create web application session
 app = Flask(__name__)
-app.config['upload_folder'] = '/var/www/FlaskApp/FlaskApp/static/images/uploads'
+app.config['upload_folder'] = '/home/ubuntu/documents/projects/udacity-projects/item-catalog-linux-server/FlaskApp/FlaskApp/static/images/uploads'
 
 # Global Variables
 category_list = ['Videogames', 'Books', 'Movies', 'Music', 'Technology', 'Food', 'Furniture']
@@ -60,15 +60,19 @@ def get_user_id(name = None, email = None):
 
 # creates users. User made through a third-party will be given an encrypted_password.
 def create_user(login_details, encrypted_password = encrypt.make_password_hash("WUBBA", "LUBBA") ):
-	session.add(Users(name = login_details['username'], email = login_details['email'], encrypted_password = encrypted_password))
-	session.commit()
-	login_session['user-id'] = get_user_id(email = login_details['email'])
-	user_picture = upload_file(login_details.get('picture'), login_session['user-id'], 'users' )
-	if user_picture:
-		login_session['picture'] = user_picture
-		user = session.query(Users).filter(Users.id == login_session['user-id']).first()
-		user.picture = user_picture
+	try:
+		session.add(Users(name = login_details['username'], email = login_details['email'], encrypted_password = encrypted_password))
 		session.commit()
+		login_session['user-id'] = get_user_id(email = login_details['email'])
+		user_picture = upload_file(login_details.get('picture'), login_session['user-id'], 'users' )
+		if user_picture:
+			login_session['picture'] = user_picture
+			user = session.query(Users).filter(Users.id == login_session['user-id']).first()
+			user.picture = user_picture
+			session.commit()
+	except Exception, e:
+		print("There was an error: ")
+		print(e)
 
 def update_user_session_credentials(user_id):
 	login_session['email'] = session.query(Users.email).filter(Users.id == user_id).scalar()
@@ -176,77 +180,81 @@ def first_party_login():
 @app.route('/login/google-login', methods = ['POST'])
 def google_login():
 	if request.method == 'POST':
-		print("processing")
-		if request.args.get('state') != login_session['state']:
-			response = make_response(json.dumps('Invalid State Parameter'), 401)
-			response.headers['Content-Type'] = 'application/json'
-			return response
-		code = request.data
-		CLIENT_ID = json.loads(open('/var/www/FlaskApp/FlaskApp/google_client_secrets.json', 'r').read())['web']['client_id']
-		oauth_flow = flow_from_clientsecrets('/var/www/FlaskApp/FlaskApp/google_client_secrets.json', scope='')
-		oauth_flow.redirect_uri = 'postmessage'
-		credentials = oauth_flow.step2_exchange(code)
+		try:
+			print("processing")
+			if request.args.get('state') != login_session['state']:
+				response = make_response(json.dumps('Invalid State Parameter'), 401)
+				response.headers['Content-Type'] = 'application/json'
+				return response
+			code = request.data
+			CLIENT_ID = json.loads(open('/home/ubuntu/documents/projects/udacity-projects/item-catalog-linux-server/FlaskApp/FlaskApp/google_client_secrets.json', 'r').read())['web']['client_id']
+			oauth_flow = flow_from_clientsecrets('/home/ubuntu/documents/projects/udacity-projects/item-catalog-linux-server/FlaskApp/FlaskApp/google_client_secrets.json', scope='')
+			oauth_flow.redirect_uri = 'postmessage'
+			credentials = oauth_flow.step2_exchange(code)
 
-		# Check that the access token is valid.
-		access_token = credentials.access_token
-		url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-		       % access_token)
-		h = httplib2.Http()
-		result = json.loads(h.request(url, 'GET')[1])
+			# Check that the access token is valid.
+			access_token = credentials.access_token
+			url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
+			       % access_token)
+			h = httplib2.Http()
+			result = json.loads(h.request(url, 'GET')[1])
 
-		# If there was an error in the access token info, abort.
-		if result.get('error') is not None:
-			response = make_response(json.dumps(result.get('error')), 500)
-			response.headers['Content-Type'] = 'application/json'
-			return response
+			# If there was an error in the access token info, abort.
+			if result.get('error') is not None:
+				response = make_response(json.dumps(result.get('error')), 500)
+				response.headers['Content-Type'] = 'application/json'
+				return response
 
-		# Verify that the access token is used for the intended user.
-		gplus_id = credentials.id_token['sub']
-		if result['user_id'] != gplus_id:
-			response = make_response(json.dumps("Token's user ID doesn't match given user ID."), 401)
-			response.headers['Content-Type'] = 'application/json'
-			return response
+			# Verify that the access token is used for the intended user.
+			gplus_id = credentials.id_token['sub']
+			if result['user_id'] != gplus_id:
+				response = make_response(json.dumps("Token's user ID doesn't match given user ID."), 401)
+				response.headers['Content-Type'] = 'application/json'
+				return response
 
-		# Verify that the access token is valid for this app.
-		if result['issued_to'] != CLIENT_ID:
-			response = make_response(json.dumps("Token's client ID does not match app's."), 401)
-			response.headers['Content-Type'] = 'application/json'
-			return response
+			# Verify that the access token is valid for this app.
+			if result['issued_to'] != CLIENT_ID:
+				response = make_response(json.dumps("Token's client ID does not match app's."), 401)
+				response.headers['Content-Type'] = 'application/json'
+				return response
 
-		stored_credentials = login_session.get('credentials')
-		stored_gplus_id = login_session.get('gplus_id')
+			stored_credentials = login_session.get('credentials')
+			stored_gplus_id = login_session.get('gplus_id')
 
-		# Store the access token in the session for later use.
-		login_session['credentials'] = credentials
-		login_session['gplus_id'] = gplus_id
+			# Store the access token in the session for later use.
+			login_session['credentials'] = credentials
+			login_session['gplus_id'] = gplus_id
 
-		# Get user info
-		userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-		params = {'access_token': credentials.access_token, 'alt': 'json'}
-		answer = requests.get(userinfo_url, params=params)
+			# Get user info
+			userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+			params = {'access_token': credentials.access_token, 'alt': 'json'}
+			answer = requests.get(userinfo_url, params=params)
 
-		data = answer.json()
+			data = answer.json()
 
-		login_session['username'] = data['name']
-		login_session['picture'] = data['picture']
-		login_session['email'] = data['email']
-		print('update data')
-		print login_session['username']
-		# See if a user exists, if it doesn't make a new one
-		user_id = get_user_id(email = login_session['email'])
-		if not user_id:
-			if not session.query(Users.id).filter(func.lower(Users.name) == login_session['username'].lower()).scalar(): # if name has not been taken
-				create_user(login_session)
-			else:
-				return 'username_taken'
-		else: # if user exists checks if user has a pre-existing account. If so, uses that username instead of making new one.
-			prev_username = session.query(Users.name).filter(Users.id == user_id).scalar()
-			if prev_username:
-				login_session['username'] = prev_username
-			user = session.query(Users).filter(Users.id == user_id).scalar()
-			user.picture = login_session.get('picture')
-			session.commit()
-		login_session['user-id'] = get_user_id(email = login_session['email'])
+			login_session['username'] = data['name']
+			login_session['picture'] = data['picture']
+			login_session['email'] = data['email']
+			print('update data')
+			print login_session['username']
+			# See if a user exists, if it doesn't make a new one
+			user_id = get_user_id(email = login_session['email'])
+			if not user_id:
+				if not session.query(Users.id).filter(func.lower(Users.name) == login_session['username'].lower()).scalar(): # if name has not been taken
+					create_user(login_session)
+				else:
+					return 'username_taken'
+			else: # if user exists checks if user has a pre-existing account. If so, uses that username instead of making new one.
+				prev_username = session.query(Users.name).filter(Users.id == user_id).scalar()
+				if prev_username:
+					login_session['username'] = prev_username
+				user = session.query(Users).filter(Users.id == user_id).scalar()
+				user.picture = login_session.get('picture')
+				session.commit()
+			login_session['user-id'] = get_user_id(email = login_session['email'])
+		except Exception, e:
+			print('Error: ')
+			print(e)
 		return 'logged_in'
 
 @app.route('/login/facebook-login', methods = ['POST'])

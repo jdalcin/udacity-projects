@@ -41,16 +41,16 @@
 				</div>
 			</div>
 
-			
+
 			<!-- THIRD-PARTY AUTHENTICATION -->
 			<div class="row">
 				<div class="col-xs-12 text-center">
-					<h2>Third-Party Logins</h2>
+					<h2>Google Login</h2>
 				</div>
 			</div>
 			<div class="row">
 				<!-- Facebook login button -->
-				<div class="col-xs-6 text-right">
+				<!-- <div class="col-xs-6 text-right">
 					<fb:login-button data-size="large" scope="public_profile, email" onlogin="sendTokenToServer();">
 		     				Login with Facebook
 		    			</fb:login-button>
@@ -60,7 +60,7 @@
 					    window.fbAsyncInit = function() {
 					      FB.init({
 					        appId      : '792271364271541',
-					        cookie     : true,  // enable cookies to allow the server to access 
+					        cookie     : true,  // enable cookies to allow the server to access
 					                            // the session
 					        xfbml      : true,  // parse social plugins on this page
 					        version    : 'v2.8' // use version 2.8
@@ -104,7 +104,7 @@
 						              $('#result').html('Login Successful!<br>Redirecting...');
 						              setTimeout(function() {
 						                window.location.href = "{{url_for('homepage')}}";
-						              }, 4000);  
+						              }, 4000);
 						 }
 					            } else {
 					              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
@@ -114,15 +114,15 @@
 					      });
 					    }
 					  </script>
-				</div>
+				</div> -->
 				<!-- End facebook button -->
 
 				<!-- Google+ Login Button -->
-				<div class="col-xs-6">
+				<div class="col-xs-12" style="display:flex;justify-content:center;align-items:center">
 					<div id="signInButton">
 				          <span class="g-signin"
 				            data-scope="openid email"
-				            data-clientid="174999044103-jp1nkpgbaciekbvoebrq39qvilmookut.apps.googleusercontent.com"
+				            data-clientid="650001394065-9it1u0r59r40vn2enft2ud12okp0eklt.apps.googleusercontent.com"
 				            data-redirecturi="postmessage"
 				            data-accesstype="offline"
 				            data-cookiepolicy="single_host_origin"
@@ -162,7 +162,7 @@
 						        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
 						         }
 						      }
-						      
+
 						  }); } }
 					</script>
 				</div>
@@ -175,13 +175,13 @@
 					<div id="result"></div>
 				</div>
 			</div>
-			
+
 
 			<div class="row toggle-display">
 				<div class="col-xs-12">
 					<div class="row">
 						<div class="col-xs-12 text-center small">
-							Not a registered user? 
+							Not a registered user?
 						</div>
 					</div>
 					<div class="row">
