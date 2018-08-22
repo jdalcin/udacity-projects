@@ -4,8 +4,7 @@ This is a craiglist-like website called "Item Catalog" secured and hosted from a
 
 # Website Access
 
-Visit http://ec2-54-234-170-136.compute-1.amazonaws.com
-
+Visit http://jdalcincraigslist.hopto.org
 # Server Information
 
 1. IP Address: 13.58.164.182
