@@ -7,7 +7,7 @@ A blog for multiple users. Once an account is registered, users can post and com
 Steps:
 
 1. Reach the front page by one of two methods:
-	* go to the URL https://multi-user-blog-165603.appspot.com .
+	* go to the URL https://jdalcinblog.appspot.com .
 	* your localhost server using the file "main.py" in Google App Engine:
    		i. Make sure the location of the files within the "main.py" directory are unaltered. 
    		ii. Get google app engine launcher to reach them (File --> Add existing application). 
