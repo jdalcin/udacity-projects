@@ -71,6 +71,7 @@ function setBounds(locations) {
 		location.setMap(map);
 		bounds.extend(location.position);
 	});
+	map.fitBounds(bounds);
 	google.maps.event.addDomListener(window, 'resize', function() {
   		map.fitBounds(bounds);
 	});
@@ -129,7 +130,7 @@ function populateInfoWindow(infoWindow, marker) {
 
     // Adds Wiki Information of Marker Location to Info Window
     $.ajax({
-          url: 'http://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=' + marker_title,
+          url: 'https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=' + marker_title,
           dataType: "json",
           success: function(results, status) {
 	        	if (status === 'success') {

@@ -1,0 +1,83 @@
+.title {
+	margin: 20px 0;
+  	font: bold 75px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  	color: #fff;
+  	text-shadow: 0 1px 0 #cccccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbbbbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaaaaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.15);
+}
+
+.portfolio {
+	background: linear-gradient(to right, #0cebeb, #20e3b2, #29ffc6);
+	border-radius: 2px;
+}
+
+.portfolio-project {
+	width: 100%;
+	max-width: 300px;
+	height: 400px;
+	margin: 0 auto;
+	background-color: #FFFFFF;
+	border: 1px black solid;
+	border-radius: 2px;
+	box-shadow: 3px 3px 5px 6px rgba(0, 0, 0, 0.4);
+	padding: 0;
+}
+
+.left-image {
+	float: left;
+	margin: 0px 15px 15px 0px;
+}
+
+.right-image {
+	float: right;
+	margin: 0px 15px 15px 0px;
+}
+
+.sm-vertical-margin {
+	margin: 15px 0;
+}
+
+.wrap {
+	position: relative;
+	height: 50%;
+	width: 100%;
+	background: linear-gradient(to right, #000428, #004e92);
+}
+
+.wrap > a {
+	position: absolute;
+	height: 40px;
+	top:0;
+	left: 0;
+	right:0;
+	bottom: 0;
+	margin: auto 0;
+	text-align: center;
+	color: #FFFFFF;
+	font-size: 24px;
+	font-weight: 400;
+	opacity: .7;
+}
+
+.wrap > a:hover {
+	text-decoration: none;
+}
+
+.block-breaker {
+	position: absolute;
+	background-image: url(img/block-breaker.jpg);
+	background-size: cover;
+	background-repeat: no-repeat;
+	top: 0;
+	left: 0;
+	z-index: 4;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+@media all and (max-width: 480px) {
+	.title {
+		font-size: 15vw;
+	}
+}

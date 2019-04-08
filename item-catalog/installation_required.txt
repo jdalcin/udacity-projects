@@ -1,7 +1,0 @@
-Note installing using sudo command allows files to be accessed by all users in linux installation.
-
-Files to install:
-
-pip install werkzeug==0.8.3
-pip install flask==0.9
-pip install Flask-Login==0.1.3
